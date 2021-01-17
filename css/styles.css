@@ -113,6 +113,23 @@ dl {
   margin-bottom: 1rem;
 }
 
+.navbar-brand img {
+  width: 30%;
+  height: 30%;
+}
+
+.navbar-nav ul li {
+  margin: 0 15em;
+}
+
+.language input {
+  width: 10%;
+  height: 10%;
+}
+
+#page-top nav {
+  font-size: 20px;
+}
 ol ol,
 ul ul,
 ol ul,
