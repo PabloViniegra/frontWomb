@@ -18,7 +18,7 @@
 
 <body class="container text-center" onload="loadSelectCountries();">
     <img src="../resources/img/mensajero.png" class="col -12 w-25 mt-5">
-    <form class="row g-3 text-center mt-5" style="border: 2px solid aliceblue;padding: 1em;">
+    <form class="row g-3 text-center mt-5" style="border: 2px solid aliceblue;padding: 1em;" id="formUser">
         
         <div class="col-12 col-lg-4 mb-3">
           <label for="validationName" class="form-label">Nombre</label>
@@ -55,7 +55,7 @@
             </select>
           </div>
         <div class="col-12 mt-5">
-          <button class="btn btn-primary" type="button">Registrarse</button>
+          <button class="btn btn-primary" type="button" id="btnRegister" onclick="addNewUser()">Registrarse</button>
         </div>
       </form>
 
