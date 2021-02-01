@@ -56,7 +56,7 @@ async function addNewUser() {
     } catch (error) {
         console.error(error);
     }
-    
+
     //Doing the POST
 
     let name = document.getElementById('validationName')
@@ -65,7 +65,10 @@ async function addNewUser() {
     let password = document.getElementById('validationPassword')
     let repeatpass = document.getElementById('validationRepeatPass')
     let email = document.getElementById('validationEmail')
-    if (password.value == repeatpass.value && checkInputs()) {
+    let checkImg = document.getElementById('checkRegister');
+    if (password.value == repeatpass.value && checkInputs()
+        && checkDuplicatedNames()
+        && complexPassword()) {
         axios.post(BASE_URL + 'users', {
             name: name.value,
             lastname: lastname.value,
@@ -84,6 +87,8 @@ async function addNewUser() {
         })
             .then(function (response) {
                 console.log(response.status);
+                checkImg.style.transition = '0.5s'
+                checkImg.style.display = 'block'
             })
             .catch(function (error) {
                 console.log(error);
@@ -105,6 +110,40 @@ function checkInputs() {
             alert('Algun campo esta vacío. Rellénelo, por favor.')
             continue;
         }
+    }
+    return checking;
+}
+
+async function checkDuplicatedNames() {
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    let aux;
+    let checking = true;
+    await axios.get(BASE_URL + 'users', options)
+        .then(function (response) {
+            aux = response.data;
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    for (let i = 0; i < aux.length; i++) {
+        if (aux[i].username == document.getElementById('validationUsername').value) {
+            checking = false;
+            alert('Ese nombre de usuario ya ha sido escogido por otra persona.')
+            break;
+        }
+    }
+    return checking;
+
+}
+
+function complexPassword() {
+    let checking = true;
+    if (document.getElementById('validationPassword').value.length < 6) {
+        checking = false;
+        alert('La contraseña debe tener al menos 6 caracteres')
     }
     return checking;
 }

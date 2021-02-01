@@ -14,22 +14,23 @@
     type="text/css" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="../css/styles.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/stylesregister.css">
 </head>
 
 <body class="container text-center" onload="loadSelectCountries();">
     <img src="../resources/img/mensajero.png" class="col -12 w-25 mt-5">
-    <form class="row g-3 text-center mt-5" style="border: 2px solid aliceblue;padding: 1em;" id="formUser">
+    <form class="row g-3 text-center mt-5" style="border: 2px solid aliceblue;padding: 1em; border-radius: 1em;" id="formUser">
         
         <div class="col-12 col-lg-4 mb-3">
-          <label for="validationName" class="form-label">Nombre</label>
+          <label for="validationName" class="form-label font-weight-bold">Nombre</label>
           <input type="text" class="form-control" id="validationName" placeholder="Tu nombre" required>
         </div>
         <div class="col-12 col-lg-4 mb-3">
-          <label for="validationLastName" class="form-label">Apellidos</label>
+          <label for="validationLastName" class="form-label font-weight-bold">Apellidos</label>
           <input type="text" class="form-control" id="validationLastName" placeholder="Tus apellidos" required>
         </div>
         <div class="col-12 col-lg-4 mb-3">
-          <label for="validationUsername" class="form-label">Nombre de Usuario</label>
+          <label for="validationUsername" class="form-label font-weight-bold">Nombre de Usuario</label>
           <div class="input-group">
             <span class="input-group-text" id="inputGroupPrepend2">@</span>
             <input type="text" class="form-control" id="validationUsername" required>
@@ -37,33 +38,37 @@
         </div>
         
         <div class="col-12 col-lg-6">
-          <label for="validationPassword" class="form-label">Contraseña</label>
+          <label for="validationPassword" class="form-label font-weight-bold">Contraseña</label>
           <input type="password" class="form-control" id="validationPassword" required>
         </div>
         <div class="col-12 col-lg-6">
-            <label for="validationRepeatPass" class="form-label">Repetir Contraseña</label>
+            <label for="validationRepeatPass" class="form-label font-weight-bold">Repetir Contraseña</label>
             <input type="password" class="form-control" id="validationRepeatPass" required>
           </div>
         <div class="col-12 col-lg-6">
-          <label for="validationEmail" class="form-label">Email</label>
+          <label for="validationEmail" class="form-label font-weight-bold">Email</label>
           <input type="email" class="form-control" id="validationEmail" placeholder="ejemplo@..." required>
         </div>
         <div class="col-12 col-lg-6">
-            <label for="selectCountriesValidation" class="form-label">Seleccione País</label>
+            <label for="selectCountriesValidation" class="form-label font-weight-bold">Seleccione País</label>
             <select id="selectCountriesValidation" class="form-control">
 
             </select>
           </div>
         <div class="col-12 mt-5">
-          <button class="btn btn-primary" type="button" id="btnRegister" onclick="addNewUser()">Registrarse</button>
+          <button class="btn btn-primary" type="button" id="btnRegister" onclick="addNewUser()" style="border: 1px solid black;">Registrarse</button>
+          
+        </div>
+        <div class="d-flex justify-content-center align-items-center col-12">
+          <img src="../resources/img/cheque.png" class="w-25" style="display: none;" id="checkRegister">
         </div>
       </form>
-
+  <script src="../js/login.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="../js/login.js"></script>
+  
 </body>
 
 </html>
