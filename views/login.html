@@ -14,12 +14,13 @@
     type="text/css" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="../css/styles.css" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/stylesregister.css">
 </head>
 
-<body class="container row justify-content-center align-content-center">
+<body class="container row justify-content-center align-content-center" onload="loginIntoWomb()">
   
-  <form class="col-12 col-md-6 col-lg-5 text-center" style="margin-top: 25%;margin-left: 60%;border: 2px solid aliceblue; padding: 10px;">
+  <form class="col-12 col-md-6 col-lg-5 text-center" style="margin-top: 25%;margin-left: 60%;border: 2px solid aliceblue; padding: 10px;" id="formLogin">
     <img src="../resources/img/mensajero.png" class="w-50 mb-2">
     <hr>
     <div class="mb-3">
@@ -31,12 +32,13 @@
       <input type="password" class="form-control" id="inputPasswordLogin">
     </div>
     <a href="register.html" class="pr-3">Registrarse</a>
-    <button type="submit" class="btn btn-primary">Acceder</button>
+    <button type="submit" id="accessBtn" class="btn btn-primary">Acceder</button>
   </form>
-
+  <script src="../js/login.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="../js/login.js"></script>
 </body>
 

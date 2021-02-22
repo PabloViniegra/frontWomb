@@ -67,7 +67,7 @@ async function addNewUser() {
     let email = document.getElementById('validationEmail')
     let checkImg = document.getElementById('checkRegister');
     if (password.value == repeatpass.value && checkInputs()
-        && checkDuplicatedNames()
+        && await checkDuplicatedNames()
         && complexPassword()) {
         axios.post(BASE_URL + 'users', {
             name: name.value,
@@ -124,17 +124,21 @@ async function checkDuplicatedNames() {
     await axios.get(BASE_URL + 'users', options)
         .then(function (response) {
             aux = response.data;
+            let i = 0;
+            while (i < aux.length && checking) {
+                if (aux[i].username == document.getElementById('validationUsername').value) {
+                    checking = false;
+                    alert('Ese nombre de usuario ya ha sido escogido por otra persona.')
+                }
+                i++;
+            }
         })
         .catch(function (error) {
             console.log(error);
         })
-    for (let i = 0; i < aux.length; i++) {
-        if (aux[i].username == document.getElementById('validationUsername').value) {
-            checking = false;
-            alert('Ese nombre de usuario ya ha sido escogido por otra persona.')
-            break;
-        }
-    }
+
+
+
     return checking;
 
 }
@@ -146,4 +150,29 @@ function complexPassword() {
         alert('La contraseña debe tener al menos 6 caracteres')
     }
     return checking;
+}
+
+
+
+async function loginIntoWomb() {
+    document.querySelector('#formLogin').addEventListener('submit', (e) => {
+        e.preventDefault();
+        let username = document.getElementById('inputEmailLogin')
+        let password = document.getElementById('inputPasswordLogin')
+
+        axios.post(BASE_URL + 'login', {
+            username: username.value,
+            password: password.value
+        })
+            .then(function (response) {
+                console.log('Código de respuesta: ' + response.status);
+                if (response.status == 200) {
+                    location.href = '../index.html'
+                } 
+            })
+            .catch(function (error) {
+                alert('Ese usuario no existe')
+            });
+    })
+
 }
