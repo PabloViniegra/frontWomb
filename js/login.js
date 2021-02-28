@@ -66,9 +66,11 @@ async function addNewUser() {
     let repeatpass = document.getElementById('validationRepeatPass')
     let email = document.getElementById('validationEmail')
     let checkImg = document.getElementById('checkRegister');
-    if (password.value == repeatpass.value && checkInputs()
+    if (samePass(password.value, repeatpass.value) && checkInputs()
         && await checkDuplicatedNames()
-        && complexPassword()) {
+        && complexPassword(password.value)
+        && await checkUniqueEmail()
+        && validateEmail(email.value)) {
         axios.post(BASE_URL + 'users', {
             name: name.value,
             lastname: lastname.value,
@@ -94,11 +96,26 @@ async function addNewUser() {
                 console.log(error);
             });
 
+    } 
+}
+
+function validateEmail(email) {
+    const validation = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (email.match(validation)) {
+        return true;
     } else {
-        alert('La contraseña tiene que ser la misma. Por favor, revíselo.')
+        alert('Debes introducir una dirección de email válida')
+        return false;
     }
+}
 
-
+function samePass(pass, repeatPass) {
+    if (pass == repeatPass) {
+        return true;
+    } else {
+        alert('La contraseña deben ser la misma')
+        return false;
+    }
 }
 
 function checkInputs() {
@@ -112,6 +129,30 @@ function checkInputs() {
         }
     }
     return checking;
+}
+
+async function checkUniqueEmail() {
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    let aux;
+    let checking = true;
+    await axios.get(BASE_URL + 'users',options)
+    .then(function (response) {
+        aux = response.data;
+        let i = 0
+        while (i < aux.length && checking) {
+            if (aux[i].email == document.getElementById('validationEmail').value) {
+                checking = false;
+                alert('Este email ya ha sido usado para una cuenta')
+            }
+            i++;
+        }
+    })
+    .catch(function (error) {
+        console.log(error)
+    })
 }
 
 async function checkDuplicatedNames() {
@@ -137,22 +178,18 @@ async function checkDuplicatedNames() {
             console.log(error);
         })
 
-
-
     return checking;
-
 }
 
-function complexPassword() {
-    let checking = true;
-    if (document.getElementById('validationPassword').value.length < 6) {
-        checking = false;
-        alert('La contraseña debe tener al menos 6 caracteres')
+function complexPassword(password) {
+    let complexity=  /^(?=.\d)(?=.[a-z])(?=.[A-Z])(?=.[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+    if (password.match(complexity)) {
+        return true
+    } else {
+        alert('La contraseña debe contener entre 8 y 15 caracteres que contengan al menos una minúscula, una mayúscula, un número y un carácter especial')
+        return false;
     }
-    return checking;
 }
-
-
 
 async function loginIntoWomb() {
     document.querySelector('#formLogin').addEventListener('submit', (e) => {
@@ -167,6 +204,8 @@ async function loginIntoWomb() {
             .then(function (response) {
                 console.log('Código de respuesta: ' + response.status);
                 if (response.status == 200) {
+                    localStorage.setItem('username',username.value)
+                    localStorage.setItem('password',password.value)
                     location.href = '../index.html'
                 } 
             })
