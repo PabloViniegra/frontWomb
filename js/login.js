@@ -30,73 +30,79 @@ async function loadSelectCountries() {
 
 async function addNewUser() {
     let form = document.getElementById('formUser')
-    let select = document.getElementById('selectCountriesValidation')
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        let select = document.getElementById('selectCountriesValidation')
 
-    //Taking the value of the country selected
-    idCountry = select.options[select.selectedIndex].value;
-    const options = {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    }
-    let country;
-    try {
-        const response = await axios.get(BASE_URL + 'countries/' + idCountry, options)
-        country = {
-            id: idCountry,
-            iso: response.data.iso,
-            nicename: response.data.nicename,
-            name: response.data.name,
-            iso3: response.data.iso3,
-            numcode: response.data.numcode,
-            phonecode: response.data.phonecode
-        }
-
-    } catch (error) {
-        console.error(error);
-    }
-
-    //Doing the POST
-
-    let name = document.getElementById('validationName')
-    let lastname = document.getElementById('validationLastName')
-    let username = document.getElementById('validationUsername')
-    let password = document.getElementById('validationPassword')
-    let repeatpass = document.getElementById('validationRepeatPass')
-    let email = document.getElementById('validationEmail')
-    let checkImg = document.getElementById('checkRegister');
-    if (samePass(password.value, repeatpass.value) && checkInputs()
-        && await checkDuplicatedNames()
-        && complexPassword(password.value)
-        && await checkUniqueEmail()
-        && validateEmail(email.value)) {
-        axios.post(BASE_URL + 'users', {
-            name: name.value,
-            lastname: lastname.value,
-            email: email.value,
-            username: username.value,
-            password: password.value,
-            country: {
-                id: country.id,
-                iso: country.iso,
-                nicename: country.nicename,
-                name: country.name,
-                iso3: country.iso3,
-                numcode: country.numcode,
-                phonecode: country.phonecode
+        //Taking the value of the country selected
+        idCountry = select.options[select.selectedIndex].value;
+        const options = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             }
-        })
-            .then(function (response) {
-                console.log(response.status);
-                checkImg.style.transition = '0.5s'
-                checkImg.style.display = 'block'
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        }
+        let country;
+        try {
+            const response = await axios.get(BASE_URL + 'countries/' + idCountry, options)
+            country = {
+                id: idCountry,
+                iso: response.data.iso,
+                nicename: response.data.nicename,
+                name: response.data.name,
+                iso3: response.data.iso3,
+                numcode: response.data.numcode,
+                phonecode: response.data.phonecode
+            }
 
-    } 
+        } catch (error) {
+            console.error(error);
+        }
+
+        console.log(country)
+        //Doing the POST
+
+        let name = document.getElementById('validationName')
+        let lastname = document.getElementById('validationLastName')
+        let username = document.getElementById('validationUsername')
+        let password = document.getElementById('validationPassword')
+        let repeatpass = document.getElementById('validationRepeatPass')
+        let email = document.getElementById('validationEmail')
+        let checkImg = document.getElementById('checkRegister');
+        if (samePass(password.value, repeatpass.value) && checkInputs()
+            && await checkDuplicatedNames()
+            && complexPassword(password.value)
+            && await checkUniqueEmail()
+            && validateEmail(email.value)) {
+
+            axios.post(BASE_URL + 'users', {
+                name: name.value,
+                lastname: lastname.value,
+                email: email.value,
+                username: username.value,
+                password: password.value,
+                country: {
+                    id: country.id,
+                    iso: country.iso,
+                    nicename: country.nicename,
+                    name: country.name,
+                    iso3: country.iso3,
+                    numcode: country.numcode,
+                    phonecode: country.phonecode
+                }
+            })
+                .then(function (response) {
+                    console.log(response.status);
+                    checkImg.style.transition = '0.5s'
+                    checkImg.style.display = 'block'
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+        }
+    })
+
 }
 
 function validateEmail(email) {
@@ -138,21 +144,25 @@ async function checkUniqueEmail() {
     }
     let aux;
     let checking = true;
-    await axios.get(BASE_URL + 'users',options)
-    .then(function (response) {
-        aux = response.data;
-        let i = 0
-        while (i < aux.length && checking) {
-            if (aux[i].email == document.getElementById('validationEmail').value) {
-                checking = false;
-                alert('Este email ya ha sido usado para una cuenta')
+    await axios.get(BASE_URL + 'users', options)
+        .then(function (response) {
+            aux = response.data;
+            let i = 0
+            while (i < aux.length && checking) {
+                if (aux[i].email == document.getElementById('validationEmail').value) {
+                    checking = false;
+                    alert('Este email ya ha sido usado para una cuenta')
+                }
+                console.log(aux[i].email)
+                console.log(document.getElementById('validationEmail').value)
+                console.log(checking)
+                i++;
             }
-            i++;
-        }
-    })
-    .catch(function (error) {
-        console.log(error)
-    })
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
+        return checking
 }
 
 async function checkDuplicatedNames() {
@@ -182,11 +192,11 @@ async function checkDuplicatedNames() {
 }
 
 function complexPassword(password) {
-    let complexity=  /^(?=.\d)(?=.[a-z])(?=.[A-Z])(?=.[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+    let complexity = /^[A-Za-z]\w{7,14}$/;
     if (password.match(complexity)) {
         return true
     } else {
-        alert('La contraseña debe contener entre 8 y 15 caracteres que contengan al menos una minúscula, una mayúscula, un número y un carácter especial')
+        alert('La contraseña debe contener entre 6 y 20 caracteres que contengan al menos una minúscula, una mayúscula y un número')
         return false;
     }
 }
@@ -204,10 +214,10 @@ async function loginIntoWomb() {
             .then(function (response) {
                 console.log('Código de respuesta: ' + response.status);
                 if (response.status == 200) {
-                    localStorage.setItem('username',username.value)
-                    localStorage.setItem('password',password.value)
+                    localStorage.setItem('username', username.value)
+                    localStorage.setItem('password', password.value)
                     location.href = '../index.html'
-                } 
+                }
             })
             .catch(function (error) {
                 alert('Ese usuario no existe')

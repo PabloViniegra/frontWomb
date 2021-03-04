@@ -15,9 +15,10 @@
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="../css/styles.css" rel="stylesheet" />
   <link rel="stylesheet" href="../css/stylesregister.css">
+  
 </head>
 
-<body class="container text-center" onload="loadSelectCountries();">
+<body class="container text-center" onload="loadSelectCountries(); addNewUser();">
     <img src="../resources/img/mensajero.png" class="col -12 w-25 mt-5">
     <form class="row g-3 text-center mt-5" style="border: 2px solid aliceblue;padding: 1em; border-radius: 1em;" id="formUser">
         
@@ -56,18 +57,19 @@
             </select>
           </div>
         <div class="col-12 mt-5">
-          <button class="btn btn-primary" type="button" id="btnRegister" onclick="addNewUser()" style="border: 1px solid black;">Registrarse</button>
+          <button class="btn btn-primary" type="submit" id="btnRegister" style="border: 1px solid black;">Registrarse</button>
           
         </div>
         <div class="d-flex justify-content-center align-items-center col-12">
           <img src="../resources/img/cheque.png" class="w-25" style="display: none;" id="checkRegister">
         </div>
       </form>
-  <script src="../js/login.js"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../js/login.js"></script>
   
 </body>
 
