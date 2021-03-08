@@ -153,9 +153,6 @@ async function checkUniqueEmail() {
                     checking = false;
                     alert('Este email ya ha sido usado para una cuenta')
                 }
-                console.log(aux[i].email)
-                console.log(document.getElementById('validationEmail').value)
-                console.log(checking)
                 i++;
             }
         })
@@ -215,12 +212,11 @@ async function loginIntoWomb() {
                 console.log('Código de respuesta: ' + response.status);
                 if (response.status == 200) {
                     localStorage.setItem('username', username.value)
-                    localStorage.setItem('password', password.value)
                     location.href = '../index.html'
                 }
             })
             .catch(function (error) {
-                alert('Ese usuario no existe')
+                alert('Los datos son erróneos.')
             });
     })
 
