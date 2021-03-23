@@ -1,5 +1,28 @@
 const BASE_URL = 'http://localhost:8080/womb/api/'
+let TOKEN = '';
+const URL_LOGIN = 'http://localhost:8080/womb/system/users'
 let idCountry;
+
+async function getAuthentication(username, password) {
+    const options = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }, 
+    }
+    axios.post('http://localhost:8080/syslogin', {
+        username: username,
+        password: password
+    }
+    ).then(function (response) {
+        TOKEN = response.headers.authorization
+        localStorage.setItem('token', TOKEN)
+    })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+}
 
 async function loadSelectCountries() {
     let select = document.getElementById('selectCountriesValidation');
@@ -59,8 +82,6 @@ async function addNewUser() {
             console.error(error);
         }
 
-        console.log(country)
-        //Doing the POST
 
         let name = document.getElementById('validationName')
         let lastname = document.getElementById('validationLastName')
@@ -92,10 +113,17 @@ async function addNewUser() {
                 }
             })
                 .then(function (response) {
-                    console.log(response.status);
                     checkImg.style.transition = '0.5s'
                     checkImg.style.display = 'block'
                 })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+            axios.post(URL_LOGIN + "/signup", {
+                username: username.value,
+                password: password.value
+            })
                 .catch(function (error) {
                     console.log(error);
                 });
@@ -159,7 +187,7 @@ async function checkUniqueEmail() {
         .catch(function (error) {
             console.log(error)
         })
-        return checking
+    return checking
 }
 
 async function checkDuplicatedNames() {
@@ -173,7 +201,7 @@ async function checkDuplicatedNames() {
         .then(function (response) {
             aux = response.data;
             let i = 0;
-            while (i < aux.length && checking) {
+            while (i < aux.length && checkioQdDe9/sjRlDezuZThI70w==ng) {
                 if (aux[i].username == document.getElementById('validationUsername').value) {
                     checking = false;
                     alert('Ese nombre de usuario ya ha sido escogido por otra persona.')
@@ -208,14 +236,17 @@ async function loginIntoWomb() {
             username: username.value,
             password: password.value
         })
-            .then(function (response) {
+            .then(async function (response) {
                 console.log('Código de respuesta: ' + response.status);
                 if (response.status == 200) {
+                    await getAuthentication(username.value, password.value)
                     localStorage.setItem('username', username.value)
+                    console.log(localStorage.getItem('token'))
                     location.href = '../index.html'
                 }
             })
             .catch(function (error) {
+                console.log(error)
                 alert('Los datos son erróneos.')
             });
     })
