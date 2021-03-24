@@ -2,6 +2,8 @@ const BASE_URL = 'http://localhost:8080/womb/api/'
 let TOKEN = '';
 const URL_LOGIN = 'http://localhost:8080/womb/system/users'
 let idCountry;
+let debug_register = document.querySelector('#debug_register')
+let debug_login = document.querySelector('#debug_login')
 
 async function getAuthentication(username, password) {
     const options = {
@@ -138,7 +140,7 @@ function validateEmail(email) {
     if (email.match(validation)) {
         return true;
     } else {
-        alert('Debes introducir una dirección de email válida')
+        debug_register.innerHTML = 'Debes introducir una dirección de email válida';
         return false;
     }
 }
@@ -147,7 +149,7 @@ function samePass(pass, repeatPass) {
     if (pass == repeatPass) {
         return true;
     } else {
-        alert('La contraseña deben ser la misma')
+        debug_register.innerHTML = 'La contraseña deben ser la misma'
         return false;
     }
 }
@@ -158,7 +160,7 @@ function checkInputs() {
     for (let i = 0; i < inputs.length; i++) {
         if (inputs[i].value == '') {
             checking = false;
-            alert('Algun campo esta vacío. Rellénelo, por favor.')
+            debug_register.innerHTML = 'Algun campo esta vacío. Rellénelo, por favor.'
             continue;
         }
     }
@@ -176,7 +178,7 @@ async function checkUniqueEmail() {
         .then(function (response) {
             if (response.status == 200) {
                 checking = false;
-                alert('Este email ya existe')
+                debug_register.innerHTML = 'Este email ya existe'
             } else if (response.status == 204) {
                 checking = true;
             } else {
@@ -198,7 +200,7 @@ async function checkDuplicatedNames() {
         .then(function (response) {
             if (response.status == 200) {
                 checking = false
-                alert('Este nombre de usuario ya ha sido escogido por otra persona')
+                debug_register.innerHTML = 'Este nombre de usuario ya ha sido escogido por otra persona'
             } else if (response.status == 204) {
                 checking = true;
             } else {
@@ -214,7 +216,7 @@ function complexPassword(password) {
     if (password.match(complexity)) {
         return true
     } else {
-        alert('La contraseña debe contener entre 6 y 20 caracteres que contengan al menos una minúscula, una mayúscula y un número')
+        debug_register.innerHTML = 'La contraseña debe contener entre 6 y 20 caracteres que contengan al menos una minúscula, una mayúscula y un número'
         return false;
     }
 }
@@ -240,7 +242,7 @@ async function loginIntoWomb() {
             })
             .catch(function (error) {
                 console.log(error)
-                alert('Los datos son erróneos.')
+                debug_login.innerHTML = 'Los datos son erróneos'
             });
     })
 
