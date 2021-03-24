@@ -8,7 +8,7 @@ async function getAuthentication(username, password) {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
-        }, 
+        },
     }
     axios.post('http://localhost:8080/syslogin', {
         username: username,
@@ -170,23 +170,20 @@ async function checkUniqueEmail() {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
-    let aux;
-    let checking = true;
-    await axios.get(BASE_URL + 'users', options)
+    let checking = false;
+    let email = document.getElementById('validationEmail')
+    await axios.get(BASE_URL + 'find/email/' + email.value, options)
         .then(function (response) {
-            aux = response.data;
-            let i = 0
-            while (i < aux.length && checking) {
-                if (aux[i].email == document.getElementById('validationEmail').value) {
-                    checking = false;
-                    alert('Este email ya ha sido usado para una cuenta')
-                }
-                i++;
+            if (response.status == 200) {
+                checking = false;
+                alert('Este email ya existe')
+            } else if (response.status == 204) {
+                checking = true;
+            } else {
+                console.log('Error in server. Not found user')
             }
         })
-        .catch(function (error) {
-            console.log(error)
-        })
+
     return checking
 }
 
@@ -195,22 +192,18 @@ async function checkDuplicatedNames() {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
-    let aux;
-    let checking = true;
-    await axios.get(BASE_URL + 'users', options)
+    let username = document.getElementById('validationUsername')
+    let checking = false;
+    await axios.get(BASE_URL + 'find/user/' + username.value, options)
         .then(function (response) {
-            aux = response.data;
-            let i = 0;
-            while (i < aux.length && checkioQdDe9/sjRlDezuZThI70w==ng) {
-                if (aux[i].username == document.getElementById('validationUsername').value) {
-                    checking = false;
-                    alert('Ese nombre de usuario ya ha sido escogido por otra persona.')
-                }
-                i++;
+            if (response.status == 200) {
+                checking = false
+                alert('Este nombre de usuario ya ha sido escogido por otra persona')
+            } else if (response.status == 204) {
+                checking = true;
+            } else {
+                console.log('Error in server. Not found user')
             }
-        })
-        .catch(function (error) {
-            console.log(error);
         })
 
     return checking;
