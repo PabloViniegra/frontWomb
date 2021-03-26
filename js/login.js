@@ -236,7 +236,7 @@ async function loginIntoWomb() {
                 if (response.status == 200) {
                     await getAuthentication(username.value, password.value)
                     localStorage.setItem('username', username.value)
-                    console.log(localStorage.getItem('token'))
+                    //console.log(localStorage.getItem('token'))
                     location.href = '../index.html'
                 }
             })
