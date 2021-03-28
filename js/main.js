@@ -58,13 +58,16 @@ async function getLastWombs() {
     let response = await axios.get(BASE_URL + 'lastwombs', options);
     response = response.data
     response.forEach(element => {
-        console.log(container)
         let div = document.createElement('div')
-        div.setAttribute('class','row p-3 border-black')
+        div.style.border = '2px solid black'
+        div.style.borderRadius = '10px'
+        div.setAttribute('class','row p-3 border-black mb-5')
         let divimg = document.createElement('div')
         divimg.setAttribute('class','col-6')
         let img = document.createElement('img')
-        img.src = 'https://fakeimg.pl/300/'
+        img.setAttribute('widt','300px')
+        img.setAttribute('height','300px')
+        img.src = element.product.image
         divimg.appendChild(img)
         div.appendChild(divimg)
         let divcontent = document.createElement('div')
@@ -81,10 +84,16 @@ async function getLastWombs() {
         let score = document.createElement('h6')
         score.setAttribute('class','col-12 text-center')
         score.innerHTML = 'Puntuación: ' + element.score
+        let btn = document.createElement('button')
+        btn.setAttribute('type', 'button')
+        btn.setAttribute('height', '8px')
+        btn.setAttribute('class','btn btn-outline-primary col-12 col-md-4')
+        btn.innerHTML = 'Ver Womb'
         divcontent.appendChild(score)
+        divcontent.appendChild(btn)
         container.appendChild(div)
 
-        div.addEventListener('click', () => {
+        btn.addEventListener('click', () => {
             console.log('click')
         })
     });

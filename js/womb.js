@@ -6,6 +6,8 @@ let review, score, date, user_id, user_name, user_lastname, user_email, user_use
 window.onload = () => {
     if (localStorage.getItem('username') != undefined) {
         getUser(localStorage.getItem('username'))
+        checkInputsEmptyExist();
+        addWomb();
     } else {
         location.href = '../views/login.html'
     }
@@ -57,7 +59,6 @@ async function addWomb() {
             },
             favouritesWomb: [] 
         }
-
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
         await axios.post(BASE_URL + 'womb', body)
         .then (response => {
@@ -89,9 +90,9 @@ async function getUser(username) {
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
     await axios.get(BASE_URL + 'username/' + username, options)
         .then(response => {
-            user_id = response.data.user_id
+            user_id = response.data.id
             user_name = response.data.name
-            user_lastname = response.data.user_lastname
+            user_lastname = response.data.lastname
             user_email = response.data.email
             user_username = response.data.username
             user_password = response.data.password
@@ -103,4 +104,15 @@ async function getUser(username) {
             country_numcode = response.data.country.numcode
             country_phonecode = response.data.country.phonecode
         })
+}
+
+function checkInputsEmptyExist() {
+    let inputs = document.getElementsByTagName('input')
+    let textareas = document.getElementsByTagName('textarea')
+    let check = false
+    for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].value = '') {
+            console.log(inputs[i].id)
+        }
+    }
 }
