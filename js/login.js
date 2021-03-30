@@ -17,8 +17,10 @@ async function getAuthentication(username, password) {
         password: password
     }
     ).then(function (response) {
+        console.log('header: ' + response.headers.authorization)
         TOKEN = response.headers.authorization
         localStorage.setItem('token', TOKEN)
+        console.log(localStorage.getItem('token'))
     })
         .catch(function (error) {
             console.log(error);
@@ -237,7 +239,8 @@ async function loginIntoWomb() {
                     await getAuthentication(username.value, password.value)
                     localStorage.setItem('username', username.value)
                     //console.log(localStorage.getItem('token'))
-                    location.href = '../index.html'
+                    setTimeout(() => {location.href = '../index.html'}, 1000);
+                    
                 }
             })
             .catch(function (error) {

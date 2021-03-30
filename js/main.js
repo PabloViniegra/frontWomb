@@ -94,7 +94,8 @@ async function getLastWombs() {
         container.appendChild(div)
 
         btn.addEventListener('click', () => {
-            console.log('click')
+            localStorage.setItem('see_womb', element.id)
+            location.href = 'views/wombfile.html'
         })
     });
 }
