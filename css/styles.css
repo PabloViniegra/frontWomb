@@ -10276,3 +10276,9 @@ form .row:first-child .floating-label-form-group {
   max-width: 100%;
   width: 100%;
 }
+
+#dropdownMenuButton1 {
+  background-color: white;
+  color:gray;
+  font-weight: bold;
+}

@@ -45,6 +45,11 @@ window.onload = () => {
         a3.innerHTML = 'Cerrar Sesión'
         li3.appendChild(a3)
         getLastWombs()
+
+        a3.addEventListener('click', () => {
+            localStorage.clear()
+            setTimeout('location.reload(true);', 500)
+        })
     } 
 }
 
