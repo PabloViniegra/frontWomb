@@ -1,11 +1,13 @@
 const BASE_URL = 'http://localhost:8080/womb/api/'
 let id;
 let responseWomb;
+let actualUser;
 
 window.onload = () => {
     if (localStorage.getItem('see_womb') != undefined) {
         id = localStorage.getItem('see_womb')
         getWomb(id)
+        getUser(localStorage.getItem('username'));
         loadCommentariesOfThisWomb()
     } else {
         console.log('id is undefined')
@@ -21,24 +23,26 @@ async function loadCommentariesOfThisWomb() {
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
     await axios.get(BASE_URL + 'commentaries/womb/' + id)
         .then(response => {
-            response.forEach(element => {
+            console.log(response.data)
+            response.data.forEach(element => {
                 if (response != '') {
                     let div = document.createElement('div')
                     div.setAttribute('class', 'row col-12 justify-content-center mb-3')
                     div.style.padding = '1em'
                     div.style.border = '2px solid #e73c7e'
+                    div.style.borderRadius = '1em'
                     blockComment.appendChild(div)
                     let user = document.createElement('p')
                     user.setAttribute('class', 'col-4')
-                    user.innerHTML = element.womb.user.username
+                    user.innerHTML = element.user.username
                     div.appendChild(user)
                     let date = document.createElement('p')
                     date.setAttribute('class', 'col-4')
-                    date.innerHTML = element.date
+                    date.innerHTML = element.date.substring(0,11)
                     div.appendChild(date)
                     let country = document.createElement('p')
                     country.setAttribute('class', 'col-4')
-                    country.innerHTML = element.womb.user.country.nicename
+                    country.innerHTML = element.user.country.nicename
                     div.appendChild(country)
                     let commentary = document.createElement('p')
                     commentary.setAttribute('class', 'col-12 text-center mt-1')
@@ -112,10 +116,27 @@ async function getWomb(id) {
         })
 }
 
-function fillBodyWomb(response, commentary, date) {
+function fillBodyWomb(response, commentary, date, actualUser) {
     let body = {
         commentary: commentary,
         date: date,
+        user: {
+            id: actualUser.id,
+            name: actualUser.name,
+            lastname: actualUser.lastname,
+            email: actualUser.email,
+            username: actualUser.username,
+            password: actualUser.password,
+            country : {
+                id: actualUser.country.id,
+                iso: actualUser.country.iso,
+                nicename: actualUser.country.nicename,
+                name: actualUser.country.name,
+                iso3: actualUser.country.iso3,
+                numcode: actualUser.country.numcode,
+                phonecode: actualUser.country.phonecode
+            } 
+        },
         womb: {
             id: response.id,
             review: response.review,
@@ -160,7 +181,7 @@ document.querySelector('#btnPushCommentary').addEventListener('click', async() =
     let input = document.querySelector('#inputUserCommentary')
     let today = new Date().toISOString().slice(0, 10)
     if (input.value != '') {
-        let body = await fillBodyWomb(responseWomb, input.value, today)
+        let body = await fillBodyWomb(responseWomb, input.value, today, actualUser)
         await axios.post(BASE_URL + 'commentaries', body)
             .then(response => {
                 console.log(body)
@@ -171,3 +192,15 @@ document.querySelector('#btnPushCommentary').addEventListener('click', async() =
         document.querySelector('#debug').innerHTML = 'No se puede publicar un comentario vacío.'
     }
 })
+
+async function getUser(username) {
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.get(BASE_URL + 'username/' + username, options)
+        .then(response => {
+            actualUser = response.data
+        })
+}

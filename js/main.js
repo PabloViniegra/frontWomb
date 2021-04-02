@@ -25,8 +25,8 @@ window.onload = () => {
         ul.appendChild(li1)
         let a1 = document.createElement('a')
         a1.setAttribute('class','dropdown-item')
-        a1.setAttribute('href','#')
-        a1.innerHTML = 'Mis Wombs'
+        a1.setAttribute('href','views/addWomb.html')
+        a1.innerHTML = 'Añadir Womb'
         li1.appendChild(a1)
 
         let li2 = document.createElement('li')
@@ -36,6 +36,14 @@ window.onload = () => {
         a2.setAttribute('href','#')
         a2.innerHTML = 'Cuenta'
         li2.appendChild(a2)
+
+        let li4 = document.createElement('li')
+        ul.appendChild(li4)
+        let a4 = document.createElement('a')
+        a4.setAttribute('class','dropdown-item')
+        a4.setAttribute('href','#')
+        a4.innerHTML = 'Wombs Favoritos'
+        li4.appendChild(a4)
 
         let li3 = document.createElement('li')
         ul.appendChild(li3)
