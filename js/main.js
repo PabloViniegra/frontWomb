@@ -1,6 +1,7 @@
 const BASE_URL = 'http://localhost:8080/womb/api/'
 
 window.onload = () => {
+    searchWomb()
     if (localStorage.getItem('username') != undefined) {
         let username = localStorage.getItem('username');
         let txtuser = document.querySelector('#linkNavigationMainSession')
@@ -59,6 +60,28 @@ window.onload = () => {
             setTimeout('location.reload(true);', 500)
         })
     } 
+}
+
+async function searchWomb() {
+    let form = document.querySelector('#formSearch')
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    form.addEventListener('submit', async(e) => {
+        e.preventDefault()
+        if (document.querySelector('#inputSearch').value != ''){
+            await axios.get(BASE_URL + 'womb/search/' + document.querySelector('#inputSearch').value, options)
+            .then (response => response = response.data)
+            .then(response => {
+                localStorage.setItem('results_found', JSON.stringify(response))
+                setTimeout(() => {location.href = 'views/wombs_result_search.html'},500)
+            })
+        } else {
+            setTimeout(() => {location.reload()},500)
+        }
+    })
 }
 
 async function getLastWombs() {
