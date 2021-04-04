@@ -2,7 +2,7 @@ const URL_CLOUDINARY = 'https://api.cloudinary.com/v1_1/cloudpablo/image/upload'
 const CLOUDINARY_UPLOAD_PRESET = 'ulctvciu';
 const BASE_URL = 'http://localhost:8080/womb/api/'
 let review, score, date, user_id, user_name, user_lastname, user_email, user_username, user_password, country_id, country_iso, country_nicename, country_name, country_iso3, country_numcode, country_phonecode, product_image;
-
+let favourites;
 window.onload = () => {
     if (localStorage.getItem('username') != undefined) {
         getUser(localStorage.getItem('username'))
@@ -12,6 +12,8 @@ window.onload = () => {
         location.href = '../views/login.html'
     }
 }
+
+
 
 async function addWomb() {
     let form = document.querySelector('#formAddWomb')
@@ -56,8 +58,7 @@ async function addWomb() {
                 brand: {
                     name: brandName.value
                 }
-            },
-            favouritesWomb: [] 
+            } 
         }
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
         await axios.post(BASE_URL + 'womb', body)

@@ -2,16 +2,52 @@ const BASE_URL = 'http://localhost:8080/womb/api/'
 let id;
 let responseWomb;
 let actualUser;
+let favourites;
 
 window.onload = () => {
     if (localStorage.getItem('see_womb') != undefined) {
         id = localStorage.getItem('see_womb')
         getWomb(id)
         getUser(localStorage.getItem('username'));
+        checkFavourites(localStorage.getItem('username'), id)
         loadCommentariesOfThisWomb()
     } else {
         console.log('id is undefined')
     }
+}
+
+async function checkFavourites(username, idWomb) {
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.get(BASE_URL + 'favourites/check/' + username + '/' + idWomb, options)
+        .then(response => {
+            if (response.status == 200) {
+                document.querySelector('#iconFavourite').src = '../resources/img/star_shining.png'
+                document.querySelector('#iconFavourite').setAttribute('favStatus', 'true')
+            } else if (response.status == 204) {
+                document.querySelector('#iconFavourite').src = '../resources/img/star.png'
+                document.querySelector('#iconFavourite').setAttribute('favStatus', 'false')
+            } else {
+                console.log('server error')
+            }
+        })
+}
+
+async function getFavouritesByUser(username) {
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.get(BASE_URL + 'favourites/user/' + username, options)
+        .then(response => response = response.data)
+        .then(response => favourites = response)
+        .then(favourites => {
+            console.log(favourites)
+        })
 }
 
 async function loadCommentariesOfThisWomb() {
@@ -38,7 +74,7 @@ async function loadCommentariesOfThisWomb() {
                     div.appendChild(user)
                     let date = document.createElement('p')
                     date.setAttribute('class', 'col-4')
-                    date.innerHTML = element.date.substring(0,11)
+                    date.innerHTML = element.date.substring(0, 11)
                     div.appendChild(date)
                     let country = document.createElement('p')
                     country.setAttribute('class', 'col-4')
@@ -112,7 +148,72 @@ async function getWomb(id) {
             user.setAttribute('class', 'col-6')
             user.innerHTML = response.user.username
             footerDiv.appendChild(user)
+            let favouriteDiv = document.createElement('div')
+            favouriteDiv.setAttribute('class', 'row col-3 justify-content-flex-end')
+            footerDiv.appendChild(favouriteDiv)
+            let favIcon = document.createElement('img')
+            favIcon.setAttribute('id', 'iconFavourite')
+            favIcon.addEventListener('click', () => {
+                if (favIcon.getAttribute('favStatus') == 'true') {
+                    removeFavourite(favIcon);
+                } else {
+                    addFavourite(favIcon);
+                }
+            })
+            favouriteDiv.appendChild(favIcon)
             mainContainer.appendChild(cardWomb)
+        })
+}
+
+async function getIdFav() {
+    let idFav;
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': localStorage.getItem('token')
+    }
+    await axios.get(BASE_URL + 'favourites/' + localStorage.getItem('username') + '/' + id, options)
+        .then(response => response = response.data)
+        .then(response => {
+            idFav = response.id
+        })
+    return idFav
+}
+
+async function removeFavourite(favIcon) {
+    let idFav = await getIdFav()
+    const headers = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': localStorage.getItem('token'),
+            'mode': 'no-cors'
+        }
+    }
+    await fetch(BASE_URL + 'favourites/' + idFav, headers)
+        .then(response => {
+            console.log(response.status)
+        })
+    favIcon.src = '../resources/img/star.png'
+    favIcon.setAttribute('favStatus', 'false')
+}
+
+async function addFavourite(favIcon) {
+    let today = new Date().toISOString().slice(0, 10)
+    let body = {
+        user: actualUser,
+        womb: responseWomb,
+        date: today
+    }
+    console.log(body)
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    axios.post(BASE_URL + 'favourites', body)
+        .then(response => {
+            if (response.status == 200) {
+                favIcon.src = '../resources/img/star_shining.png'
+                favIcon.setAttribute('favStatus', 'true')
+            }
         })
 }
 
@@ -127,7 +228,7 @@ function fillBodyWomb(response, commentary, date, actualUser) {
             email: actualUser.email,
             username: actualUser.username,
             password: actualUser.password,
-            country : {
+            country: {
                 id: actualUser.country.id,
                 iso: actualUser.country.iso,
                 nicename: actualUser.country.nicename,
@@ -135,7 +236,7 @@ function fillBodyWomb(response, commentary, date, actualUser) {
                 iso3: actualUser.country.iso3,
                 numcode: actualUser.country.numcode,
                 phonecode: actualUser.country.phonecode
-            } 
+            }
         },
         womb: {
             id: response.id,
@@ -169,15 +270,14 @@ function fillBodyWomb(response, commentary, date, actualUser) {
                 brand: {
                     name: response.product.brand.name
                 }
-            },
-            favouritesWomb: []
+            }
         }
     }
     console.log(body)
     return body;
 }
 
-document.querySelector('#btnPushCommentary').addEventListener('click', async() => {
+document.querySelector('#btnPushCommentary').addEventListener('click', async () => {
     let input = document.querySelector('#inputUserCommentary')
     let today = new Date().toISOString().slice(0, 10)
     if (input.value != '') {
