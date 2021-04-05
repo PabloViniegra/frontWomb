@@ -1,55 +1,79 @@
+const BASE_URL = 'http://localhost:8080/womb/api/'
+const options = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+}
+
 window.onload = () => {
     manageSession()
     searchWomb()
-    if (localStorage.getItem('results_found') != undefined) {
-        let response = JSON.parse(localStorage.getItem('results_found'))
-        let container = document.querySelector('#resultsFound')
-        response.forEach(element => {
-            let div = document.createElement('div')
-            div.style.border = '2px solid black'
-            div.style.borderRadius = '10px'
-            div.setAttribute('class', 'row p-3 border-black mb-5')
-            let divimg = document.createElement('div')
-            divimg.setAttribute('class', 'col-6')
-            let img = document.createElement('img')
-            img.setAttribute('widt', '300px')
-            img.setAttribute('height', '300px')
-            img.src = element.product.image
-            divimg.appendChild(img)
-            div.appendChild(divimg)
-            let divcontent = document.createElement('div')
-            divcontent.setAttribute('class', 'col-6 row justifiy-content-center p-2')
-            div.appendChild(divcontent)
-            let product = document.createElement('h3')
-            product.setAttribute('class', 'col-8')
-            product.innerHTML = element.product.name
-            divcontent.appendChild(product)
-            let user = document.createElement('h3')
-            user.setAttribute('class', 'col-4')
-            user.innerHTML = element.user.username
-            divcontent.appendChild(user)
-            let score = document.createElement('h6')
-            score.setAttribute('class', 'col-12 text-center')
-            score.innerHTML = 'Puntuación: ' + element.score
-            let btn = document.createElement('button')
-            btn.setAttribute('type', 'button')
-            btn.setAttribute('height', '8px')
-            btn.setAttribute('class', 'btn btn-outline-primary col-12 col-md-4')
-            btn.innerHTML = 'Ver Womb'
-            divcontent.appendChild(score)
-            divcontent.appendChild(btn)
-            container.appendChild(div)
+    let title = document.querySelector('#headerTitle')
+    title.innerHTML = 'Wombs favoritos de ' + localStorage.getItem('username')
+    loadFavourites()
 
-            btn.addEventListener('click', () => {
-                localStorage.setItem('see_womb', element.id)
-                location.href = 'wombfile.html'
-            })
-        });
-    } else {
-        console.log('no session started')
-    }
 }
 
+async function loadFavourites() {
+    let container = document.querySelector('#containerFavourites')
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.get(BASE_URL + 'favourites/user/' + localStorage.getItem('username'), options)
+    .then(response => response = response.data)
+    .then(response => {
+        createDOM(response,container)
+    })
+
+}
+
+function createDOM(response,container) {
+    
+    response.forEach(element => {
+        let div = document.createElement('div')
+        div.style.border = '2px solid black'
+        div.style.borderRadius = '1em'
+        div.style.boxShadow = '4px 4px 0 black'
+        div.setAttribute('class','col-12 row justify-content-around align-items-center')
+        container.appendChild(div)
+        let p = document.createElement('h4')
+        p.setAttribute('class','col-12 col-md-3')
+        p.innerHTML = element.user.username
+        div.appendChild(p)
+        let img = document.createElement('img')
+        img.setAttribute('class','col-12 col-md-3 rounded-circle')
+        img.style.border = '1px solid black'
+        img.src = element.womb.product.image
+        div.appendChild(img)
+        let username = document.createElement('p')
+        username.style.fontFamily = 'Times New Romans'
+        username.style.fontSize = '20px'
+        username.setAttribute('class','col-12 col-md-3 text-center')
+        username.innerHTML = element.womb.product.name
+        div.appendChild(username)
+        let button = document.createElement('button')
+        button.setAttribute('class','col-12 col-md-3 btn btn-outline-info')
+        button.innerHTML = 'Quitar de favoritos'
+        div.appendChild(button)
+        button.addEventListener('click', () => {
+          removeFavourite(element.id)  
+        })
+    });
+}
+
+async function removeFavourite(id) {
+    const headers = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': localStorage.getItem('token'),
+            'mode': 'no-cors'
+        }
+    }
+    await fetch(BASE_URL + 'favourites/' + id, headers)
+        .then(response => {
+            console.log(response.status)
+            setTimeout(() => {location.reload()},500)
+        })
+}
 
 async function manageSession() {
     if (localStorage.getItem('username') != undefined) {
@@ -76,7 +100,7 @@ async function manageSession() {
         ul.appendChild(li1)
         let a1 = document.createElement('a')
         a1.setAttribute('class', 'dropdown-item')
-        a1.setAttribute('href', 'views/addWomb.html')
+        a1.setAttribute('href', 'addWomb.html')
         a1.innerHTML = 'Añadir Womb'
         li1.appendChild(a1)
 

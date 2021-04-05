@@ -42,7 +42,7 @@ window.onload = () => {
         ul.appendChild(li4)
         let a4 = document.createElement('a')
         a4.setAttribute('class','dropdown-item')
-        a4.setAttribute('href','#')
+        a4.setAttribute('href','views/favouritesWombs.html')
         a4.innerHTML = 'Wombs Favoritos'
         li4.appendChild(a4)
 
