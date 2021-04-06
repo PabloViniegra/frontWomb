@@ -34,7 +34,7 @@ window.onload = () => {
         ul.appendChild(li2)
         let a2 = document.createElement('a')
         a2.setAttribute('class','dropdown-item')
-        a2.setAttribute('href','#')
+        a2.setAttribute('href','views/configurationAccount.html')
         a2.innerHTML = 'Cuenta'
         li2.appendChild(a2)
 

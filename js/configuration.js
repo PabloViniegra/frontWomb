@@ -1,55 +1,85 @@
-window.onload = () => {
-    manageSession()
-    searchWomb()
-    if (localStorage.getItem('results_found') != undefined) {
-        let response = JSON.parse(localStorage.getItem('results_found'))
-        let container = document.querySelector('#resultsFound')
-        response.forEach(element => {
-            let div = document.createElement('div')
-            div.style.border = '2px solid black'
-            div.style.borderRadius = '10px'
-            div.setAttribute('class', 'row p-3 border-black mb-5')
-            let divimg = document.createElement('div')
-            divimg.setAttribute('class', 'col-6')
-            let img = document.createElement('img')
-            img.setAttribute('widt', '300px')
-            img.setAttribute('height', '300px')
-            img.src = element.product.image
-            divimg.appendChild(img)
-            div.appendChild(divimg)
-            let divcontent = document.createElement('div')
-            divcontent.setAttribute('class', 'col-6 row justifiy-content-center p-2')
-            div.appendChild(divcontent)
-            let product = document.createElement('h3')
-            product.setAttribute('class', 'col-8')
-            product.innerHTML = element.product.name
-            divcontent.appendChild(product)
-            let user = document.createElement('h3')
-            user.setAttribute('class', 'col-4')
-            user.innerHTML = element.user.username
-            divcontent.appendChild(user)
-            let score = document.createElement('h6')
-            score.setAttribute('class', 'col-12 text-center')
-            score.innerHTML = 'Puntuación: ' + element.score
-            let btn = document.createElement('button')
-            btn.setAttribute('type', 'button')
-            btn.setAttribute('height', '8px')
-            btn.setAttribute('class', 'btn btn-outline-primary col-12 col-md-4')
-            btn.innerHTML = 'Ver Womb'
-            divcontent.appendChild(score)
-            divcontent.appendChild(btn)
-            container.appendChild(div)
-
-            btn.addEventListener('click', () => {
-                localStorage.setItem('see_womb', element.id)
-                location.href = 'wombfile.html'
-            })
-        });
-    } else {
-        console.log('no session started')
-    }
+let password, idUser;
+let name = document.getElementById('validationName')
+let lastname = document.getElementById('validationLastName')
+let username = document.getElementById('validationUsername')
+let email = document.getElementById('validationEmail')
+let select = document.querySelector('#selectCountriesValidation')
+const options = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
 }
 
+window.onload = async () => {
+    manageSession()
+    searchWomb()
+    await loadSelectCountries()
+    getAccountAndFillInputs()
+    updateUser()
+
+
+}
+
+async function updateUser() {
+    document.querySelector('#updateUser').addEventListener('submit', async (e) => {
+        e.preventDefault()
+        axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+        let body = await fillBodyUser()
+        await axios.put(BASE_URL + 'users/' + idUser, body)
+            .then(response => {
+                setTimeout(() => {location.reload()},500)
+            })
+
+    })
+}
+
+async function fillBodyUser() {
+    let body = {
+        id: idUser,
+        name: name.value,
+        lastname: lastname.value,
+        username: username.value,
+        email: email.value,
+        password: password,
+        country: await fillCountry(idCountry)
+    }
+    return body
+}
+
+async function fillCountry(idCountry) {
+    let country;
+    await axios.get(BASE_URL + 'countries/' + select.value, options)
+        .then(response => response = response.data)
+        .then(response => {
+            country = {
+                id: select.value,
+                iso: response.iso,
+                nicename: response.nicename,
+                name: response.name,
+                iso3: response.iso3,
+                numcode: response.numcode,
+                phonecode: response.phonecode
+            }
+        })
+    return country
+}
+
+async function getAccountAndFillInputs() {
+
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.get(BASE_URL + 'username/' + localStorage.getItem('username'), options)
+
+        .then(response => response = response.data)
+        .then(response => {
+            idUser = response.id
+            idCountry = response.country.id
+            select.value = response.country.id
+            name.value = response.name
+            lastname.value = response.lastname
+            username.value = response.username
+            password = response.password
+            email.value = response.email
+        })
+}
 
 async function manageSession() {
     if (localStorage.getItem('username') != undefined) {
@@ -76,7 +106,7 @@ async function manageSession() {
         ul.appendChild(li1)
         let a1 = document.createElement('a')
         a1.setAttribute('class', 'dropdown-item')
-        a1.setAttribute('href', 'views/addWomb.html')
+        a1.setAttribute('href', 'addWomb.html')
         a1.innerHTML = 'Añadir Womb'
         li1.appendChild(a1)
 
