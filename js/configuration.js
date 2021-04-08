@@ -15,7 +15,64 @@ window.onload = async () => {
     await loadSelectCountries()
     getAccountAndFillInputs()
     updateUser()
+    checkIfPasswordIsCorrect()
 
+}
+
+async function checkIfPasswordIsCorrect() {
+    let actualPass = document.querySelector('#actualPassword')
+    let hiddenForm = document.querySelector('#trueFormChangePass')
+    hiddenForm.setAttribute('class','invisible')
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    document.querySelector('#formChangePass').addEventListener('submit', async(e) => {
+        e.preventDefault()
+        if (actualPass.value != '') {
+            let body = {
+                username: localStorage.getItem('username'),
+                password: actualPass.value
+            }
+            await axios.post(BASE_URL + 'checkPassword', body)
+            .then(response => {
+                if (response.status == 200) {
+                    hiddenForm.setAttribute('class','visible')
+                    unlockPasswordChange()
+                } else if (response.status == 204) {
+                    document.querySelector('#debug').innerHTML = 'La contraseña es incorrecta'
+                } else {
+                    document.querySelector('#debug').innerHTML = 'Ha ocurrido algun error inesperado'
+                }
+            })
+        } else {
+            document.querySelector('#debug').innerHTML = 'No puede estar el campo vacío'
+        }
+
+    })    
+
+}
+
+async function unlockPasswordChange() {
+    let formChangePass = document.querySelector('#trueFormChangePass')
+    let inputPass = document.querySelector('#newPassword')
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    formChangePass.addEventListener('submit', async(e) => {
+        e.preventDefault()
+        if (inputPass.value != '') {
+            if (complexPassword(inputPass.value)) {
+                let body = {
+                    password: inputPass.value
+                }
+                await axios.patch(BASE_URL + 'users/' + idUser, body)
+                .then(response => {
+                    console.log(response.status)
+                    setTimeout(() => {location.reload()},500)
+                })
+            } else {
+                document.querySelector('#debugChangePass').innerHTML = 'La contraseña debe contener entre 6 y 20 caracteres que contengan al menos una minúscula, una mayúscula y un número'    
+            }
+        } else {
+            document.querySelector('#debugChangePass').innerHTML = 'El campo no puede estar vacío'
+        }
+    })
 
 }
 
