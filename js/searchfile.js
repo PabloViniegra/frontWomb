@@ -1,9 +1,19 @@
-window.onload = () => {
+const BASE_URL = 'http://localhost:8080/womb/api/'
+let numberTotalPages;
+window.onload = async() => {
     manageSession()
     searchWomb()
-    if (localStorage.getItem('results_found') != undefined) {
-        let response = JSON.parse(localStorage.getItem('results_found'))
-        let container = document.querySelector('#resultsFound')
+    if (localStorage.getItem('keyword_search') != undefined) {
+        await buildPagination()
+        loadDefaultResults()
+        
+    } else {
+        console.log('no session started')
+    }
+}
+
+function drawContainerByServerResponse(response) {
+    let container = document.querySelector('#resultsFound')
         response.forEach(element => {
             let div = document.createElement('div')
             div.style.border = '2px solid black'
@@ -45,11 +55,78 @@ window.onload = () => {
                 location.href = 'wombfile.html'
             })
         });
-    } else {
-        console.log('no session started')
-    }
 }
 
+async function loadDefaultResults() {
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.get(BASE_URL + 'womb/search/paginable/' + localStorage.getItem('keyword_search') + '?pageSize=' + numberTotalPages, options)
+    .then (response => response = response.data)
+    .then(response => {
+        drawContainerByServerResponse(response)
+    })
+}
+
+async function getNumberPages() {
+    let numberPages;
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.get(BASE_URL + 'womb/number/' + localStorage.getItem('keyword_search'), options)
+    .then(response => numberPages = response.data)
+
+    return numberPages
+    
+}
+
+async function loadResults(i) {
+    const options = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    await axios.get(BASE_URL + 'womb/search/paginable/' + localStorage.getItem('keyword_search') + '?pageNo=' + i + '&pageSize=' + numberTotalPages, options)
+    .then(response => response = response.data)
+    .then(response => {console.log(response)})
+
+}
+
+async function buildPagination() {
+    let numberPages = await getNumberPages();
+    let calculatedNumber;
+    if (numberPages <=5){
+        calculatedNumber = 1;
+    } else if (numberPages > 5) {
+        calculatedNumber = Math.ceil(numberPages/5)
+         
+    } 
+    numberTotalPages = calculatedNumber
+    let footer = document.querySelector('#footerPagination')
+    let nav = document.createElement('nav')
+    nav.setAttribute('aria-label','Page navigation example')
+    footer.appendChild(nav)
+    let ul = document.createElement('ul')
+    ul.setAttribute('class','pagination justify-content-center')
+    nav.appendChild(ul)
+    for (let i = 1; i <= calculatedNumber; i++) {
+        let li = document.createElement('li')
+        li.setAttribute('class','page-item')
+        ul.appendChild(li)
+        let a = document.createElement('a')
+        a.setAttribute('class','page-link')
+        li.appendChild(a)
+        a.href = '#'
+        a.innerHTML = i
+        a.addEventListener('click', () => {
+            loadResults(i)
+        })
+    }
+       
+}
 
 async function manageSession() {
     if (localStorage.getItem('username') != undefined) {
