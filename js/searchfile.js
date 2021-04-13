@@ -1,11 +1,19 @@
 const BASE_URL = 'http://localhost:8080/womb/api/'
 let numberTotalPages;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+let page = urlParams.get('page')
 window.onload = async() => {
     manageSession()
     searchWomb()
     if (localStorage.getItem('keyword_search') != undefined) {
         await buildPagination()
-        loadDefaultResults()
+        if (page != undefined) {
+            loadResults(page)
+        } else {
+            loadDefaultResults()
+        }
+        
         
     } else {
         console.log('no session started')
@@ -112,18 +120,15 @@ async function buildPagination() {
     let ul = document.createElement('ul')
     ul.setAttribute('class','pagination justify-content-center')
     nav.appendChild(ul)
-    for (let i = 1; i <= calculatedNumber; i++) {
+    for (let i = 0; i <= calculatedNumber; i++) {
         let li = document.createElement('li')
         li.setAttribute('class','page-item')
         ul.appendChild(li)
         let a = document.createElement('a')
         a.setAttribute('class','page-link')
         li.appendChild(a)
-        a.href = '#'
+        a.href = 'wombs_result_search.html?page=' + i
         a.innerHTML = i
-        a.addEventListener('click', () => {
-            loadResults(i)
-        })
     }
        
 }
