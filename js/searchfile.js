@@ -10,6 +10,7 @@ window.onload = async() => {
         await buildPagination()
         if (page != undefined) {
             loadResults(page)
+            
         } else {
             loadDefaultResults()
         }
@@ -71,14 +72,14 @@ async function loadDefaultResults() {
         'Accept': 'application/json'
     }
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-    await axios.get(BASE_URL + 'womb/search/paginable/' + localStorage.getItem('keyword_search') + '?pageSize=' + numberTotalPages, options)
+    await axios.get(BASE_URL + 'womb/search/paginable/' + localStorage.getItem('keyword_search') + '?pageSize=5', options)
     .then (response => response = response.data)
     .then(response => {
         drawContainerByServerResponse(response)
     })
 }
 
-async function getNumberPages() {
+async function getNumberItems() {
     let numberPages;
     const options = {
         'Content-Type': 'application/json',
@@ -97,21 +98,25 @@ async function loadResults(i) {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
-    await axios.get(BASE_URL + 'womb/search/paginable/' + localStorage.getItem('keyword_search') + '?pageNo=' + i + '&pageSize=' + numberTotalPages, options)
+    await axios.get(BASE_URL + 'womb/search/paginable/' + localStorage.getItem('keyword_search') + '?pageNo=' + i + '&pageSize=5', options)
     .then(response => response = response.data)
-    .then(response => {console.log(response)})
+    .then(response => {
+        drawContainerByServerResponse(response)
+        console.log(numberTotalPages)
+    })
 
 }
 
 async function buildPagination() {
-    let numberPages = await getNumberPages();
+    let numberPages = await getNumberItems();
     let calculatedNumber;
     if (numberPages <=5){
         calculatedNumber = 1;
     } else if (numberPages > 5) {
         calculatedNumber = Math.ceil(numberPages/5)
-         
-    } 
+                 
+    }
+     
     numberTotalPages = calculatedNumber
     let footer = document.querySelector('#footerPagination')
     let nav = document.createElement('nav')
@@ -120,7 +125,7 @@ async function buildPagination() {
     let ul = document.createElement('ul')
     ul.setAttribute('class','pagination justify-content-center')
     nav.appendChild(ul)
-    for (let i = 0; i <= calculatedNumber; i++) {
+    for (let i = 0; i < calculatedNumber; i++) {
         let li = document.createElement('li')
         li.setAttribute('class','page-item')
         ul.appendChild(li)
@@ -128,7 +133,7 @@ async function buildPagination() {
         a.setAttribute('class','page-link')
         li.appendChild(a)
         a.href = 'wombs_result_search.html?page=' + i
-        a.innerHTML = i
+        a.innerHTML = i+1
     }
        
 }
