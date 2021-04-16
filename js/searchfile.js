@@ -163,7 +163,7 @@ async function manageSession() {
         ul.appendChild(li1)
         let a1 = document.createElement('a')
         a1.setAttribute('class', 'dropdown-item')
-        a1.setAttribute('href', 'views/addWomb.html')
+        a1.setAttribute('href', 'addWomb.html')
         a1.innerHTML = 'Añadir Womb'
         li1.appendChild(a1)
 
@@ -208,12 +208,8 @@ async function searchWomb() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault()
         if (document.querySelector('#inputSearch').value != '') {
-            await axios.get(BASE_URL + 'womb/search/' + document.querySelector('#inputSearch').value, options)
-                .then(response => response = response.data)
-                .then(response => {
-                    localStorage.setItem('results_found', JSON.stringify(response))
-                    setTimeout(() => { location.href = 'views/wombs_result_search.html' }, 500)
-                })
+            localStorage.setItem('keyword_search', document.querySelector('#inputSearch').value)
+            setTimeout(() => { location.href = 'wombs_result_search.html' }, 500)
         } else {
             setTimeout(() => { location.reload() }, 500)
         }
