@@ -28,7 +28,7 @@ async function addWomb() {
         let brandName = document.querySelector('#brandName')
         let reviewWomb = document.querySelector('#reviewWomb')
         let scoreWomb = document.querySelector('#scoreWomb')
-
+        let checkImageWomb = document.getElementById('imgOkSuccesful')
         const body = {
             review: reviewWomb.value,
             score: scoreWomb.value,
@@ -65,7 +65,10 @@ async function addWomb() {
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
         await axios.post(BASE_URL + 'womb', body)
         .then (response => {
-            console.log(response.status)
+            if (response.status == 200) {
+                checkImageWomb.style.transition = '0.5s'
+                checkImageWomb.style.display = 'block'
+            }
         })
 
     })

@@ -8,7 +8,7 @@ const options = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
 }
-
+let URL_SYSTEM_LOGIN = 'http://localhost:8080/womb/system/users/'
 window.onload = async () => {
     manageSession()
     searchWomb()
@@ -22,9 +22,9 @@ window.onload = async () => {
 async function checkIfPasswordIsCorrect() {
     let actualPass = document.querySelector('#actualPassword')
     let hiddenForm = document.querySelector('#trueFormChangePass')
-    hiddenForm.setAttribute('class','invisible')
+    hiddenForm.setAttribute('class', 'invisible')
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-    document.querySelector('#formChangePass').addEventListener('submit', async(e) => {
+    document.querySelector('#formChangePass').addEventListener('submit', async (e) => {
         e.preventDefault()
         if (actualPass.value != '') {
             let body = {
@@ -32,21 +32,21 @@ async function checkIfPasswordIsCorrect() {
                 password: actualPass.value
             }
             await axios.post(BASE_URL + 'checkPassword', body)
-            .then(response => {
-                if (response.status == 200) {
-                    hiddenForm.setAttribute('class','visible')
-                    unlockPasswordChange()
-                } else if (response.status == 204) {
-                    document.querySelector('#debug').innerHTML = 'La contraseña es incorrecta'
-                } else {
-                    document.querySelector('#debug').innerHTML = 'Ha ocurrido algun error inesperado'
-                }
-            })
+                .then(response => {
+                    if (response.status == 200) {
+                        hiddenForm.setAttribute('class', 'visible')
+                        unlockPasswordChange()
+                    } else if (response.status == 204) {
+                        document.querySelector('#debug').innerHTML = 'La contraseña es incorrecta'
+                    } else {
+                        document.querySelector('#debug').innerHTML = 'Ha ocurrido algun error inesperado'
+                    }
+                })
         } else {
             document.querySelector('#debug').innerHTML = 'No puede estar el campo vacío'
         }
 
-    })    
+    })
 
 }
 
@@ -54,7 +54,7 @@ async function unlockPasswordChange() {
     let formChangePass = document.querySelector('#trueFormChangePass')
     let inputPass = document.querySelector('#newPassword')
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-    formChangePass.addEventListener('submit', async(e) => {
+    formChangePass.addEventListener('submit', async (e) => {
         e.preventDefault()
         if (inputPass.value != '') {
             if (complexPassword(inputPass.value)) {
@@ -62,12 +62,16 @@ async function unlockPasswordChange() {
                     password: inputPass.value
                 }
                 await axios.patch(BASE_URL + 'users/' + idUser, body)
-                .then(response => {
-                    console.log(response.status)
-                    setTimeout(() => {location.reload()},500)
-                })
+                    .then(response => {
+                        console.log(response)
+                    })
+                await axios.patch(URL_SYSTEM_LOGIN + 'systemuser/' + localStorage.getItem('username'), body)
+                    .then(response => {
+                        console.log(response)
+                        setTimeout(() => { location.reload() }, 500)
+                    })
             } else {
-                document.querySelector('#debugChangePass').innerHTML = 'La contraseña debe contener entre 6 y 20 caracteres que contengan al menos una minúscula, una mayúscula y un número'    
+                document.querySelector('#debugChangePass').innerHTML = 'La contraseña debe contener entre 6 y 20 caracteres que contengan al menos una minúscula, una mayúscula y un número'
             }
         } else {
             document.querySelector('#debugChangePass').innerHTML = 'El campo no puede estar vacío'
@@ -81,9 +85,17 @@ async function updateUser() {
         e.preventDefault()
         axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
         let body = await fillBodyUser()
+        let bodySystemUser = {
+            username: body.username
+        }
         await axios.put(BASE_URL + 'users/' + idUser, body)
             .then(response => {
-                setTimeout(() => {location.reload()},500)
+                console.log(response.status)
+            })
+        await axios.patch(URL_SYSTEM_LOGIN + 'systemuser/' + localStorage.getItem('username'), bodySystemUser)
+            .then(response => {
+                console.log(response.status)
+                setTimeout(() => { location.reload() }, 500)
             })
 
     })
