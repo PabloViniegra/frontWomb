@@ -10,9 +10,11 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 let page = urlParams.get('page')
 
-window.onload = () => {
+window.onload = async () => {
+    manageSession()
+    searchWomb()
     if (localStorage.getItem('username') != undefined) {
-        buildPagination()
+        await buildPaginationMyWombs()
         if (page != undefined) {
             loadMyWombs(page)
         } else {
@@ -25,43 +27,45 @@ window.onload = () => {
 }
 
 async function getListNumber() {
+    let numberItemsWomb
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
     await axios.get(BASE_URL + 'womb/user/number/' + localStorage.getItem('username'), options)
         .then(response => response = response.data)
         .then(response => {
-            return response
+            numberItemsWomb = response
         })
+    return numberItemsWomb
 }
 
-async function buildPagination() {
+async function buildPaginationMyWombs() {
     let numberPagesWomb = await getListNumber();
-    let numberDefinitive;
-    if (numberPagesWomb <= 5) {
-        numberDefinitive = 1;
-    } else if (numberPagesWomb > 5) {
-        numberDefinitive = Math.ceil(numberPages / 5)
+     let numberDefinitive;
+     if (numberPagesWomb <= 5) {
+         numberDefinitive = 1;
+     } else if (numberPagesWomb > 5) {
+         numberDefinitive = Math.ceil(numberPagesWomb / 5)
 
-    }
-    console.log(numberPagesWomb)
-    console.log(numberDefinitive)
-    numberTotalPages = numberDefinitive
-    let footer = document.querySelector('#footerPaginationUserWomb')
-    let nav = document.createElement('nav')
-    nav.setAttribute('aria-label', 'Page navigation example')
-    footer.appendChild(nav)
-    let ul = document.createElement('ul')
-    ul.setAttribute('class', 'pagination justify-content-center')
-    nav.appendChild(ul)
-    for (let i = 0; i < numberDefinitive; i++) {
-        let li = document.createElement('li')
-        li.setAttribute('class', 'page-item')
-        ul.appendChild(li)
-        let a = document.createElement('a')
-        a.setAttribute('class', 'page-link')
-        li.appendChild(a)
-        a.href = 'mywombs.html?page=' + i
-        a.innerHTML = i + 1
-    }
+     }
+     console.log(numberPagesWomb)
+     console.log(numberDefinitive)
+     numberTotalPages = numberDefinitive
+     let footer = document.querySelector('#footerPaginationUserWomb')
+     let nav = document.createElement('nav')
+     nav.setAttribute('aria-label', 'Page navigation example')
+     footer.appendChild(nav)
+     let ul = document.createElement('ul')
+     ul.setAttribute('class', 'pagination justify-content-center')
+     nav.appendChild(ul)
+     for (let i = 0; i < numberDefinitive; i++) {
+         let li = document.createElement('li')
+         li.setAttribute('class', 'page-item')
+         ul.appendChild(li)
+         let a = document.createElement('a')
+         a.setAttribute('class', 'page-link')
+         li.appendChild(a)
+         a.href = 'mywombs.html?page=' + i
+         a.innerHTML = i + 1
+     }
 
 }
 
