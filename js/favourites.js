@@ -3,57 +3,122 @@ const options = {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
 }
+let footer = document.getElementById('footerPaginationFavourites')
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+let page = urlParams.get('page')
+let numberTotalPages
+let container = document.querySelector('#containerFavourites')
 
 window.onload = () => {
     manageSession()
     searchWomb()
-    let title = document.querySelector('#headerTitle')
-    title.innerHTML = 'Wombs favoritos de ' + localStorage.getItem('username')
-    loadFavourites()
+    if (localStorage.getItem('username') != undefined) {
+        let title = document.querySelector('#headerTitle')
+        title.innerHTML = 'Wombs favoritos de ' + localStorage.getItem('username')
+        buildPaginationFavourites()
+        if (page != undefined) {
+            loadPageFavourites(page)
+        } else {
+            loadDefaultFavourites()
+        }
 
+    } else {
+        location.href = 'login.js'
+    }
 }
 
-async function loadFavourites() {
-    let container = document.querySelector('#containerFavourites')
+async function loadDefaultFavourites() {
+
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
-    await axios.get(BASE_URL + 'favourites/user/' + localStorage.getItem('username'), options)
-    .then(response => response = response.data)
-    .then(response => {
-        createDOM(response,container)
-    })
+    await axios.get(BASE_URL + 'womb/favourites/pageable/' + localStorage.getItem('username') + '?pageSize=5', options)
+        .then(response => response = response.data)
+        .then(response => {
+            drawContainerFavourites(response, container)
+        })
 
 }
 
-function createDOM(response,container) {
-    
+async function loadPageFavourites(page) {
+
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.get(BASE_URL + 'womb/favourites/pageable/' + localStorage.getItem('username') + '?pageNo=' + page + '&pageSize=5', options)
+        .then(response => response = response.data)
+        .then(response => {
+            drawContainerFavourites(response, container)
+        })
+
+}
+async function getNumberFavouritesWomb() {
+    let numberItems;
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.get(BASE_URL + 'womb/favourites/number/' + localStorage.getItem('username'), options)
+        .then(response => response = response.data)
+        .then(response => {
+            numberItems = response
+        })
+    return numberItems
+}
+
+async function buildPaginationFavourites() {
+    let numberPagesFavourites = await getNumberFavouritesWomb();
+    let numberDefinitive;
+    if (numberPagesFavourites <= 5) {
+        numberDefinitive = 1;
+    } else if (numberPagesFavourites > 5) {
+        numberDefinitive = Math.ceil(numberPagesFavourites / 5)
+
+    }
+    numberTotalPages = numberDefinitive
+    let nav = document.createElement('nav')
+    nav.setAttribute('aria-label', 'Page navigation example')
+    footer.appendChild(nav)
+    let ul = document.createElement('ul')
+    ul.setAttribute('class', 'pagination justify-content-center')
+    nav.appendChild(ul)
+    for (let i = 0; i < numberDefinitive; i++) {
+        let li = document.createElement('li')
+        li.setAttribute('class', 'page-item')
+        ul.appendChild(li)
+        let a = document.createElement('a')
+        a.setAttribute('class', 'page-link')
+        li.appendChild(a)
+        a.href = 'favouritesWombs.html?page=' + i
+        a.innerHTML = i + 1
+    }
+
+}
+
+function drawContainerFavourites(response, container) {
+
     response.forEach(element => {
         let div = document.createElement('div')
         div.style.border = '2px solid black'
         div.style.borderRadius = '1em'
         div.style.boxShadow = '4px 4px 0 black'
-        div.setAttribute('class','col-12 row justify-content-around align-items-center')
+        div.setAttribute('class', 'col-12 row justify-content-around align-items-center')
         container.appendChild(div)
         let p = document.createElement('h4')
-        p.setAttribute('class','col-12 col-md-3')
+        p.setAttribute('class', 'col-12 col-md-3')
         p.innerHTML = element.user.username
         div.appendChild(p)
         let img = document.createElement('img')
-        img.setAttribute('class','col-12 col-md-3 rounded-circle')
+        img.setAttribute('class', 'col-12 col-md-3 rounded-circle')
         img.style.border = '1px solid black'
         img.src = element.womb.product.image
         div.appendChild(img)
         let username = document.createElement('p')
         username.style.fontFamily = 'Times New Romans'
         username.style.fontSize = '20px'
-        username.setAttribute('class','col-12 col-md-3 text-center')
+        username.setAttribute('class', 'col-12 col-md-3 text-center')
         username.innerHTML = element.womb.product.name
         div.appendChild(username)
         let button = document.createElement('button')
-        button.setAttribute('class','col-12 col-md-3 btn btn-outline-info')
+        button.setAttribute('class', 'col-12 col-md-3 btn btn-outline-info')
         button.innerHTML = 'Quitar de favoritos'
         div.appendChild(button)
         button.addEventListener('click', () => {
-          removeFavourite(element.id)  
+            removeFavourite(element.id)
         })
     });
 }
@@ -71,7 +136,7 @@ async function removeFavourite(id) {
     await fetch(BASE_URL + 'favourites/' + id, headers)
         .then(response => {
             console.log(response.status)
-            setTimeout(() => {location.reload()},500)
+            setTimeout(() => { location.reload() }, 500)
         })
 }
 
