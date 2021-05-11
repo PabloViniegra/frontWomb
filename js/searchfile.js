@@ -3,19 +3,19 @@ let numberTotalPages;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 let page = urlParams.get('page')
-window.onload = async() => {
+window.onload = async () => {
     manageSession()
     searchWomb()
     if (localStorage.getItem('keyword_search') != undefined) {
         await buildPagination()
         if (page != undefined) {
             loadResults(page)
-            
+
         } else {
             loadDefaultResults()
         }
-        
-        
+
+
     } else {
         console.log('no session started')
     }
@@ -23,47 +23,48 @@ window.onload = async() => {
 
 function drawContainerByServerResponse(response) {
     let container = document.querySelector('#resultsFound')
-        response.forEach(element => {
-            let div = document.createElement('div')
-            div.style.border = '2px solid black'
-            div.style.borderRadius = '10px'
-            div.setAttribute('class', 'row p-3 border-black mb-5')
-            let divimg = document.createElement('div')
-            divimg.setAttribute('class', 'col-6')
-            let img = document.createElement('img')
-            img.setAttribute('widt', '300px')
-            img.setAttribute('height', '300px')
-            img.src = element.product.image
-            divimg.appendChild(img)
-            div.appendChild(divimg)
-            let divcontent = document.createElement('div')
-            divcontent.setAttribute('class', 'col-6 row justifiy-content-center p-2')
-            div.appendChild(divcontent)
-            let product = document.createElement('h3')
-            product.setAttribute('class', 'col-8')
-            product.innerHTML = element.product.name
-            divcontent.appendChild(product)
-            let user = document.createElement('h3')
-            user.setAttribute('class', 'col-4')
-            user.innerHTML = element.user.username
-            divcontent.appendChild(user)
-            let score = document.createElement('h6')
-            score.setAttribute('class', 'col-12 text-center')
-            score.innerHTML = 'Puntuación: ' + element.score
-            let btn = document.createElement('button')
-            btn.setAttribute('type', 'button')
-            btn.setAttribute('height', '8px')
-            btn.setAttribute('class', 'btn btn-outline-primary col-12 col-md-4')
-            btn.innerHTML = 'Ver Womb'
-            divcontent.appendChild(score)
-            divcontent.appendChild(btn)
-            container.appendChild(div)
+    response.forEach(element => {
+        let div = document.createElement('div')
+        div.style.border = '2px solid black'
+        div.style.borderRadius = '10px'
+        div.setAttribute('class', 'col-12 row p-3 border-black mb-5')
+        let divimg = document.createElement('div')
+        divimg.setAttribute('class', 'col-12 col-md-6 text-center')
+        let img = document.createElement('img')
+        img.setAttribute('class', 'img-fluid img-thumbnail')
+        img.setAttribute('widt', '300px')
+        img.setAttribute('height', '300px')
+        img.src = element.product.image
+        divimg.appendChild(img)
+        div.appendChild(divimg)
+        let divcontent = document.createElement('div')
+        divcontent.setAttribute('class', 'col-12 col-md-6 row justifiy-content-center p-2')
+        div.appendChild(divcontent)
+        let product = document.createElement('h3')
+        product.setAttribute('class', 'col-8')
+        product.innerHTML = element.product.name
+        divcontent.appendChild(product)
+        let user = document.createElement('h3')
+        user.setAttribute('class', 'col-4')
+        user.innerHTML = element.user.username
+        divcontent.appendChild(user)
+        let score = document.createElement('h6')
+        score.setAttribute('class', 'col-12 text-center')
+        score.innerHTML = 'Puntuación: ' + element.score
+        let btn = document.createElement('button')
+        btn.setAttribute('type', 'button')
+        btn.setAttribute('height', '8px')
+        btn.setAttribute('class', 'btn btn-outline-primary col-12 col-md-4 text-center p-3 mt-5')
+        btn.innerHTML = 'Ver Womb'
+        divcontent.appendChild(score)
+        div.appendChild(btn)
+        container.appendChild(div)
 
-            btn.addEventListener('click', () => {
-                localStorage.setItem('see_womb', element.id)
-                location.href = 'wombfile.html'
-            })
-        });
+        btn.addEventListener('click', () => {
+            localStorage.setItem('see_womb', element.id)
+            location.href = 'wombfile.html'
+        })
+    });
 }
 
 async function loadDefaultResults() {
@@ -73,10 +74,10 @@ async function loadDefaultResults() {
     }
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
     await axios.get(BASE_URL + 'womb/search/paginable/' + localStorage.getItem('keyword_search') + '?pageSize=5', options)
-    .then (response => response = response.data)
-    .then(response => {
-        drawContainerByServerResponse(response)
-    })
+        .then(response => response = response.data)
+        .then(response => {
+            drawContainerByServerResponse(response)
+        })
 }
 
 async function getNumberItems() {
@@ -87,10 +88,10 @@ async function getNumberItems() {
     }
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
     await axios.get(BASE_URL + 'womb/number/' + localStorage.getItem('keyword_search'), options)
-    .then(response => numberPages = response.data)
+        .then(response => numberPages = response.data)
 
     return numberPages
-    
+
 }
 
 async function loadResults(i) {
@@ -99,43 +100,43 @@ async function loadResults(i) {
         'Accept': 'application/json'
     }
     await axios.get(BASE_URL + 'womb/search/paginable/' + localStorage.getItem('keyword_search') + '?pageNo=' + i + '&pageSize=5', options)
-    .then(response => response = response.data)
-    .then(response => {
-        drawContainerByServerResponse(response)
-        console.log(numberTotalPages)
-    })
+        .then(response => response = response.data)
+        .then(response => {
+            drawContainerByServerResponse(response)
+            console.log(numberTotalPages)
+        })
 
 }
 
 async function buildPagination() {
     let numberPages = await getNumberItems();
     let calculatedNumber;
-    if (numberPages <=5){
+    if (numberPages <= 5) {
         calculatedNumber = 1;
     } else if (numberPages > 5) {
-        calculatedNumber = Math.ceil(numberPages/5)
-                 
+        calculatedNumber = Math.ceil(numberPages / 5)
+
     }
-     
+
     numberTotalPages = calculatedNumber
     let footer = document.querySelector('#footerPagination')
     let nav = document.createElement('nav')
-    nav.setAttribute('aria-label','Page navigation example')
+    nav.setAttribute('aria-label', 'Page navigation example')
     footer.appendChild(nav)
     let ul = document.createElement('ul')
-    ul.setAttribute('class','pagination justify-content-center')
+    ul.setAttribute('class', 'pagination justify-content-center')
     nav.appendChild(ul)
     for (let i = 0; i < calculatedNumber; i++) {
         let li = document.createElement('li')
-        li.setAttribute('class','page-item')
+        li.setAttribute('class', 'page-item')
         ul.appendChild(li)
         let a = document.createElement('a')
-        a.setAttribute('class','page-link')
+        a.setAttribute('class', 'page-link')
         li.appendChild(a)
         a.href = 'wombs_result_search.html?page=' + i
-        a.innerHTML = i+1
+        a.innerHTML = i + 1
     }
-       
+
 }
 
 async function manageSession() {

@@ -96,6 +96,13 @@ function drawContainerFavourites(response, container) {
         div.style.border = '2px solid black'
         div.style.borderRadius = '1em'
         div.style.boxShadow = '4px 4px 0 black'
+        div.style.marginBottom = '1em'
+        div.addEventListener('mouseover', () => {
+            div.style.backgroundColor = '#f1b0b7'
+        })
+        div.addEventListener('mouseout', () => {
+            div.style.backgroundColor = 'white'
+        })
         div.setAttribute('class', 'col-12 row justify-content-around align-items-center')
         container.appendChild(div)
         let p = document.createElement('h4')
@@ -103,7 +110,9 @@ function drawContainerFavourites(response, container) {
         p.innerHTML = element.user.username
         div.appendChild(p)
         let img = document.createElement('img')
-        img.setAttribute('class', 'col-12 col-md-3 rounded-circle')
+        img.setAttribute('class', 'col-12 col-md-3 img-fluid img-thumbnail')
+        img.setAttribute('widt', '300px')
+        img.setAttribute('height', '300px')
         img.style.border = '1px solid black'
         img.src = element.womb.product.image
         div.appendChild(img)

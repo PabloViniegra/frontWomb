@@ -2,6 +2,11 @@ const BASE_URL = 'http://localhost:8080/womb/api/'
 
 window.onload = () => {
     searchWomb()
+    manageSession()
+    
+}
+
+async function manageSession() {
     if (localStorage.getItem('username') != undefined) {
         let username = localStorage.getItem('username');
         let txtuser = document.querySelector('#linkNavigationMainSession')
@@ -53,13 +58,14 @@ window.onload = () => {
         a3.setAttribute('href', '#')
         a3.innerHTML = 'Cerrar Sesión'
         li3.appendChild(a3)
-        getLastWombs()
+        getLastWombsAndDrawContainers()
 
         a3.addEventListener('click', () => {
             localStorage.clear()
             setTimeout('location.reload(true);', 500)
         })
     }
+
 }
 
 async function searchWomb() {
@@ -80,7 +86,7 @@ async function searchWomb() {
     })
 }
 
-async function getLastWombs() {
+async function getLastWombsAndDrawContainers() {
     const options = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -93,17 +99,18 @@ async function getLastWombs() {
         let div = document.createElement('div')
         div.style.border = '2px solid black'
         div.style.borderRadius = '10px'
-        div.setAttribute('class', 'row p-3 border-black mb-5')
+        div.setAttribute('class', 'col-12 row p-3 border-black mb-5')
         let divimg = document.createElement('div')
-        divimg.setAttribute('class', 'col-6')
+        divimg.setAttribute('class', 'col-12 col-md-6 text-center')
         let img = document.createElement('img')
+        img.setAttribute('class','img-fluid img-thumbnail')
         img.setAttribute('widt', '300px')
         img.setAttribute('height', '300px')
         img.src = element.product.image
         divimg.appendChild(img)
         div.appendChild(divimg)
         let divcontent = document.createElement('div')
-        divcontent.setAttribute('class', 'col-6 row justifiy-content-center p-2')
+        divcontent.setAttribute('class', 'col-12 col-md-6 row justifiy-content-center p-2')
         div.appendChild(divcontent)
         let product = document.createElement('h3')
         product.setAttribute('class', 'col-8')
@@ -119,15 +126,15 @@ async function getLastWombs() {
         let btn = document.createElement('button')
         btn.setAttribute('type', 'button')
         btn.setAttribute('height', '8px')
-        btn.setAttribute('class', 'btn btn-outline-primary col-12 col-md-4')
+        btn.setAttribute('class', 'btn btn-outline-primary col-12 col-md-4 text-center p-3 mt-5')
         btn.innerHTML = 'Ver Womb'
         divcontent.appendChild(score)
-        divcontent.appendChild(btn)
+        div.appendChild(btn)
         container.appendChild(div)
 
         btn.addEventListener('click', () => {
             localStorage.setItem('see_womb', element.id)
-            location.href = 'views/wombfile.html'
+            location.href = 'wombfile.html'
         })
     });
 }
