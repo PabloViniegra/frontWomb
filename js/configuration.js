@@ -165,7 +165,7 @@ async function manageSession() {
         button.setAttribute('type', 'button')
         button.setAttribute('id', 'dropdownMenuButton1')
         button.setAttribute('data-bs-toggle', 'dropdown')
-        button.innerHTML = username
+        button.innerHTML = '<i class="fas fa-user"></i>' + username
         div.appendChild(button)
         let ul = document.createElement('ul')
         ul.setAttribute('class', 'dropdown-menu')
@@ -207,6 +207,8 @@ async function manageSession() {
             localStorage.clear()
             setTimeout('location.reload(true);', 500)
         })
+    } else {
+        location.href = 'login.html'
     }
 }
 
