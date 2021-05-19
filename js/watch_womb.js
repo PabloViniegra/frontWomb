@@ -52,6 +52,7 @@ async function getFavouritesByUser(username) {
         })
 }
 
+
 async function loadCommentariesOfThisWomb() {
     const options = {
         'Content-Type': 'application/json',
@@ -74,7 +75,7 @@ async function loadCommentariesOfThisWomb() {
                     user.setAttribute('class', 'col-4')
                     user.innerHTML = element.user.username
                     div.appendChild(user)
-                    let date = document.createElement('p')
+                    let date = document.createElement('p') 
                     date.setAttribute('class', 'col-4')
                     date.innerHTML = element.date.substring(0, 11)
                     div.appendChild(date)
@@ -86,9 +87,29 @@ async function loadCommentariesOfThisWomb() {
                     commentary.setAttribute('class', 'col-12 text-center mt-1')
                     commentary.innerHTML = element.commentary
                     div.appendChild(commentary)
+                    let btnDelete = document.createElement('button')
+                    btnDelete.setAttribute('class','col-12 btn btn-primary')
+                    btnDelete.innerHTML = '<i class="fas fa-trash-alt"></i>'
+                    div.appendChild(btnDelete)
+                    btnDelete.addEventListener('click', () => {
+                        deleteCommentary(element.id);
+                    })
+
+                    
+
                 }
             });
         })
+}
+
+
+async function deleteCommentary(id) {
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    axios.delete(BASE_URL + 'commentaries/' + id)
+    .then(response => {
+        setTimeout(() => { location.reload() }, 1000)
+    })
+    
 }
 
 async function getWomb(id) {
@@ -294,6 +315,8 @@ document.querySelector('#btnPushCommentary').addEventListener('click', async () 
         document.querySelector('#debug').innerHTML = 'No se puede publicar un comentario vacío.'
     }
 })
+
+
 
 async function getUser(username) {
     const options = {
