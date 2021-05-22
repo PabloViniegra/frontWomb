@@ -69,7 +69,7 @@ async function buildPaginationMyWombs() {
 
 }
 
-function drawResponse(response) {
+async function drawResponse(response) {
     response.forEach(element => {
         let div = document.createElement('div')
         div.style.border = '2px solid black'
@@ -106,13 +106,75 @@ function drawResponse(response) {
         divcontent.appendChild(score)
         div.appendChild(btn)
         container.appendChild(div)
-
+        let confirmationId = 'confirmation-delete-' + element.id
+        let btnDelete = document.createElement('button')
+        btnDelete.setAttribute('type','button')
+        btnDelete.setAttribute('height','8px')
+        btnDelete.setAttribute('class','btn btn-outline-primary col-12 col-md-4 text-center p-3 mt-5')
+        btnDelete.setAttribute('data-bs-toggle','modal')
+        btnDelete.setAttribute('data-bs-target','#exampleModal' + element.id)
+        btnDelete.innerHTML = '<i class="fas fa-trash-alt"></i>'
+        div.appendChild(btnDelete)
         btn.addEventListener('click', () => {
             localStorage.setItem('see_womb', element.id)
             location.href = 'wombfile.html'
         })
-
+        buildModal(element.id, div, confirmationId)
+        
     });
+
+}
+
+function buildModal(id, div, confirmationId) {
+    let divMain = document.createElement('div')
+    divMain.setAttribute('class','modal fade')
+    divMain.setAttribute('id','exampleModal' + id)
+    divMain.setAttribute('tabindex','-1')
+    divMain.setAttribute('aria-labelledby','exampleModalLabel')
+    divMain.setAttribute('aria-hidden','true')
+    let divDialog = document.createElement('div')
+    divDialog.setAttribute('class','modal-dialog')
+    divMain.appendChild(divDialog)
+    let divContent = document.createElement('div')
+    divContent.setAttribute('class','modal-content')
+    divDialog.appendChild(divContent)
+    let header = document.createElement('div')
+    header.setAttribute('class','modal-header')
+    divContent.appendChild(header)
+    let textHeader = document.createElement('h5')
+    textHeader.setAttribute('class','modal-title')
+    textHeader.setAttribute('id','exampleModalLabel')
+    textHeader.innerHTML = 'Confirmación'
+    header.appendChild(textHeader)
+    let btnClose = document.createElement('button')
+    btnClose.setAttribute('type','button')
+    btnClose.setAttribute('class','btn-close')
+    btnClose.setAttribute('data-bs-dismiss','modal')
+    btnClose.setAttribute('aria-label','Close')
+    header.appendChild(btnClose)
+    let divBody = document.createElement('div')
+    divBody.setAttribute('class','modal-body')
+    divBody.innerHTML = '¿Seguro que quieres borrar este Womb?'
+    divContent.appendChild(divBody)
+    let divFooter = document.createElement('div')
+    divFooter.setAttribute('class','modal-footer')
+    let btnNo = document.createElement('button')
+    btnNo.setAttribute('type','button')
+    btnNo.setAttribute('class','btn btn-primary')
+    btnNo.setAttribute('data-bs-dismiss','modal')
+    btnNo.innerHTML = 'No'
+    divFooter.appendChild(btnNo)
+    let btnYes = document.createElement('button')
+    btnYes.setAttribute('type','button')
+    btnYes.setAttribute('class','btn btn-primary')
+    btnYes.setAttribute('id',confirmationId)
+    btnYes.innerHTML = 'Si'
+    divFooter.appendChild(btnYes)
+    divContent.appendChild(divFooter)
+    div.appendChild(divMain)
+    btnYes.addEventListener('click', () => {
+        deleteWomb(id)
+    })
 
 }
 
@@ -126,7 +188,13 @@ async function loadDefaultWombs() {
 }
 
 
-
+async function deleteWomb(id) {
+    axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
+    await axios.delete(BASE_URL + 'womb/' + id)
+    .then(response => {
+        setTimeout(() => { location.reload() }, 1000)
+    })
+}
 
 
 async function loadMyWombs(page) {

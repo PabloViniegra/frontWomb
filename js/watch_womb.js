@@ -69,33 +69,45 @@ async function loadCommentariesOfThisWomb() {
                     div.setAttribute('class', 'row col-12 justify-content-center mb-3')
                     div.style.padding = '1em'
                     div.style.border = '2px solid #e73c7e'
+                    div.style.boxShadow = '4px 4px 0 #e73c7e'
                     div.style.borderRadius = '1em'
                     blockComment.appendChild(div)
                     let user = document.createElement('p')
-                    user.setAttribute('class', 'col-4')
-                    user.innerHTML = element.user.username
+                    user.setAttribute('class', 'col-4 text-center')
+                    user.style.backgroundColor = '#E8AFC3'
+                    user.style.borderRadius = '2em'
+                    user.innerHTML = '<i class="fas fa-user pr-1"></i>' + element.user.username
                     div.appendChild(user)
-                    let date = document.createElement('p') 
-                    date.setAttribute('class', 'col-4')
-                    date.innerHTML = element.date.substring(0, 11)
+                    let date = document.createElement('p')
+                    date.setAttribute('class', 'col-4 text-center')
+                    date.style.backgroundColor = '#E8AFC3'
+                    date.style.borderRadius = '2em'
+                    date.innerHTML = '<i class="fas fa-calendar-minus"></i>' + element.date.substring(0, 11)
                     div.appendChild(date)
                     let country = document.createElement('p')
-                    country.setAttribute('class', 'col-4')
+                    country.setAttribute('class', 'col-4 text-center')
+                    country.style.backgroundColor = '#E8AFC3'
+                    country.style.borderRadius = '2em'
                     country.innerHTML = element.user.country.nicename
                     div.appendChild(country)
                     let commentary = document.createElement('p')
-                    commentary.setAttribute('class', 'col-12 text-center mt-1')
+                    commentary.setAttribute('class', 'col-12 text-center m-1 bg-light')
                     commentary.innerHTML = element.commentary
                     div.appendChild(commentary)
-                    let btnDelete = document.createElement('button')
-                    btnDelete.setAttribute('class','col-12 btn btn-primary')
-                    btnDelete.innerHTML = '<i class="fas fa-trash-alt"></i>'
-                    div.appendChild(btnDelete)
-                    btnDelete.addEventListener('click', () => {
-                        deleteCommentary(element.id);
-                    })
 
-                    
+                    if (localStorage.getItem('username') == element.user.username) {
+                        let btnDelete = document.createElement('button')
+                        btnDelete.setAttribute('type','button')
+                        btnDelete.setAttribute('class', 'col-12 btn btn-primary')
+                        btnDelete.setAttribute('data-bs-toggle','modal')
+                        btnDelete.setAttribute('data-bs-target','#exampleModal')
+                        btnDelete.innerHTML = '<i class="fas fa-trash-alt"></i>'
+                        div.appendChild(btnDelete)
+
+                        document.getElementById('confirmationButton').addEventListener('click', () => {
+                            deleteCommentary(element.id);
+                        })
+                    }
 
                 }
             });
@@ -106,10 +118,10 @@ async function loadCommentariesOfThisWomb() {
 async function deleteCommentary(id) {
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
     axios.delete(BASE_URL + 'commentaries/' + id)
-    .then(response => {
-        setTimeout(() => { location.reload() }, 1000)
-    })
-    
+        .then(response => {
+            setTimeout(() => { location.reload() }, 1000)
+        })
+
 }
 
 async function getWomb(id) {
@@ -127,39 +139,38 @@ async function getWomb(id) {
             cardWomb.setAttribute('class', 'womb-card')
             let colImg = document.createElement('div')
             cardWomb.appendChild(colImg)
-            colImg.setAttribute('class', 'col-6 row justify-content-center')
+            colImg.setAttribute('class', 'col-12 col-md-6 row justify-content-center')
             let img = document.createElement('img')
+            img.setAttribute('class','img-fluid')
             img.src = response.product.image
             colImg.appendChild(img)
             let colContent = document.createElement('div')
             cardWomb.appendChild(colContent)
-            colContent.setAttribute('class', 'col-6 row justify-content-center align-items-center')
+            colContent.setAttribute('class', 'col-12 col-md-6 row justify-content-center align-items-center')
             let productTitle = document.createElement('h1')
             productTitle.innerHTML = response.product.name
             colContent.appendChild(productTitle)
             let bar = document.createElement('hr')
             colContent.appendChild(bar)
             let dataDiv = document.createElement('div')
+            dataDiv.style.backgroundColor = '#E5E5E4'
+            dataDiv.style.border = '1px solid #e4dddd'
+            dataDiv.style.borderRadius = '1em'
+            dataDiv.style.fontWeight = 'bolder'
             colContent.appendChild(dataDiv)
-            dataDiv.setAttribute('class', 'col-12 row justify-content-around')
+            dataDiv.setAttribute('class', 'col-12 row justify-content-around align-items-center')
             let date = document.createElement('p')
             date.setAttribute('class', 'col-4')
-            date.innerHTML = response.date.substring(0, 11)
+            date.innerHTML = '<i class="fas fa-calendar-minus"></i>' + response.date.substring(0, 11)
             dataDiv.appendChild(date)
             let categoryProduct = document.createElement('p')
             categoryProduct.setAttribute('class', 'col-4')
-            categoryProduct.innerHTML = response.product.category.name
+            categoryProduct.innerHTML = '<i class="fas fa-hashtag"></i>' + response.product.category.name
             dataDiv.appendChild(categoryProduct)
             let brand = document.createElement('p')
             brand.setAttribute('class', 'col-4')
-            brand.innerHTML = response.product.brand.name
+            brand.innerHTML = '<i class="fab fa-bandcamp"></i>' + response.product.brand.name
             dataDiv.appendChild(brand)
-            let contentDiv = document.createElement('div')
-            contentDiv.setAttribute('class', 'col-12 text-center')
-            colContent.appendChild(contentDiv)
-            let review = document.createElement('p')
-            review.innerHTML = response.review
-            contentDiv.appendChild(review)
             let footerDiv = document.createElement('div')
             footerDiv.setAttribute('class', 'col-12 row')
             colContent.appendChild(footerDiv)
@@ -169,12 +180,13 @@ async function getWomb(id) {
             footerDiv.appendChild(score)
             let user = document.createElement('div')
             user.setAttribute('class', 'col-6')
-            user.innerHTML = response.user.username
+            user.innerHTML = '<i class="fas fa-user"></i>' + response.user.username
             footerDiv.appendChild(user)
             let favouriteDiv = document.createElement('div')
-            favouriteDiv.setAttribute('class', 'row col-3 justify-content-flex-end')
+            favouriteDiv.setAttribute('class', 'row col-3 justify-content-center')
             footerDiv.appendChild(favouriteDiv)
             let favIcon = document.createElement('img')
+            favIcon.style.cursor = 'pointer'
             favIcon.setAttribute('id', 'iconFavourite')
             favIcon.addEventListener('click', () => {
                 if (favIcon.getAttribute('favStatus') == 'true') {
@@ -183,8 +195,24 @@ async function getWomb(id) {
                     addFavourite(favIcon);
                 }
             })
+            favIcon.addEventListener('mouseover', () => {
+                favIcon.style.border = '2px solid black'
+            })
+            favIcon.addEventListener('mouseout', () => {
+                favIcon.style.border = '0px'
+            })
             favouriteDiv.appendChild(favIcon)
             mainContainer.appendChild(cardWomb)
+            let contentDiv = document.createElement('div')
+            contentDiv.style.border = '1px solid lightgray'
+            contentDiv.style.borderRadius = '1em'
+            contentDiv.setAttribute('class', 'col-12 text-center')
+            colContent.appendChild(contentDiv)
+            let review = document.createElement('h6')
+            review.style.fontSize = '19px'
+            review.setAttribute('class','p-3')
+            review.innerHTML = response.review
+            contentDiv.appendChild(review)
         })
 }
 
@@ -404,7 +432,7 @@ async function searchWomb() {
         e.preventDefault()
         if (document.querySelector('#inputSearch').value != '') {
             localStorage.setItem('keyword_search', document.querySelector('#inputSearch').value)
-            setTimeout(() => { location.href = 'wombs_result_search.html'}, 500)
+            setTimeout(() => { location.href = 'wombs_result_search.html' }, 500)
         } else {
             setTimeout(() => { location.reload() }, 500)
         }
