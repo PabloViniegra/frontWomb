@@ -1,8 +1,10 @@
 const BASE_URL = 'http://localhost:8080/womb/api/'
 
+
 window.onload = () => {
     searchWomb()
     manageSession()
+    
     
 }
 
@@ -16,7 +18,6 @@ async function manageSession() {
         let div = document.createElement('div')
         div.setAttribute('class', 'dropdown')
         txtuser.appendChild(div)
-        //<i class="bi bi-person-circle"></i>
         let button = document.createElement('button')
         button.setAttribute('class', 'btn btn-secondary dropdown-toggle')
         button.setAttribute('type', 'button')
@@ -137,7 +138,7 @@ async function getLastWombsAndDrawContainers() {
 
         btn.addEventListener('click', () => {
             localStorage.setItem('see_womb', element.id)
-            location.href = 'wombfile.html'
+            location.href = 'views/wombfile.html'
         })
     });
 }

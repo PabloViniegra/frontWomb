@@ -92,21 +92,21 @@ async function loadCommentariesOfThisWomb() {
                     div.appendChild(country)
                     let commentary = document.createElement('p')
                     commentary.setAttribute('class', 'col-12 text-center m-1 bg-light')
+                    commentary.style.fontSize = '18px'
                     commentary.innerHTML = element.commentary
                     div.appendChild(commentary)
 
                     if (localStorage.getItem('username') == element.user.username) {
+                        let confirmationId = 'confirmation-delete-' + element.id
                         let btnDelete = document.createElement('button')
                         btnDelete.setAttribute('type','button')
                         btnDelete.setAttribute('class', 'col-12 btn btn-primary')
                         btnDelete.setAttribute('data-bs-toggle','modal')
-                        btnDelete.setAttribute('data-bs-target','#exampleModal')
+                        btnDelete.setAttribute('data-bs-target','#exampleModal' + element.id)
                         btnDelete.innerHTML = '<i class="fas fa-trash-alt"></i>'
                         div.appendChild(btnDelete)
+                        buildModal(element.id, div, confirmationId)
 
-                        document.getElementById('confirmationButton').addEventListener('click', () => {
-                            deleteCommentary(element.id);
-                        })
                     }
 
                 }
@@ -344,6 +344,58 @@ document.querySelector('#btnPushCommentary').addEventListener('click', async () 
     }
 })
 
+function buildModal(id, div, confirmationId) {
+    let divMain = document.createElement('div')
+    divMain.setAttribute('class','modal fade')
+    divMain.setAttribute('id','exampleModal' + id)
+    divMain.setAttribute('tabindex','-1')
+    divMain.setAttribute('aria-labelledby','exampleModalLabel')
+    divMain.setAttribute('aria-hidden','true')
+    let divDialog = document.createElement('div')
+    divDialog.setAttribute('class','modal-dialog')
+    divMain.appendChild(divDialog)
+    let divContent = document.createElement('div')
+    divContent.setAttribute('class','modal-content')
+    divDialog.appendChild(divContent)
+    let header = document.createElement('div')
+    header.setAttribute('class','modal-header')
+    divContent.appendChild(header)
+    let textHeader = document.createElement('h5')
+    textHeader.setAttribute('class','modal-title')
+    textHeader.setAttribute('id','exampleModalLabel')
+    textHeader.innerHTML = 'Confirmación'
+    header.appendChild(textHeader)
+    let btnClose = document.createElement('button')
+    btnClose.setAttribute('type','button')
+    btnClose.setAttribute('class','btn-close')
+    btnClose.setAttribute('data-bs-dismiss','modal')
+    btnClose.setAttribute('aria-label','Close')
+    header.appendChild(btnClose)
+    let divBody = document.createElement('div')
+    divBody.setAttribute('class','modal-body')
+    divBody.innerHTML = '¿Seguro que quieres borrar este Comentario?'
+    divContent.appendChild(divBody)
+    let divFooter = document.createElement('div')
+    divFooter.setAttribute('class','modal-footer')
+    let btnNo = document.createElement('button')
+    btnNo.setAttribute('type','button')
+    btnNo.setAttribute('class','btn btn-primary')
+    btnNo.setAttribute('data-bs-dismiss','modal')
+    btnNo.innerHTML = 'No'
+    divFooter.appendChild(btnNo)
+    let btnYes = document.createElement('button')
+    btnYes.setAttribute('type','button')
+    btnYes.setAttribute('class','btn btn-primary')
+    btnYes.setAttribute('id',confirmationId)
+    btnYes.innerHTML = 'Si'
+    divFooter.appendChild(btnYes)
+    divContent.appendChild(divFooter)
+    div.appendChild(divMain)
+    btnYes.addEventListener('click', () => {
+        deleteCommentary(id)
+    })
+
+}
 
 
 async function getUser(username) {
