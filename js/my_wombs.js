@@ -73,6 +73,7 @@ async function drawResponse(response) {
     response.forEach(element => {
         let div = document.createElement('div')
         div.style.border = '2px solid black'
+        div.style.boxShadow = '4px 4px 0 black'
         div.style.borderRadius = '10px'
         div.setAttribute('class', 'col-12 row p-3 border-black mb-5')
         let divimg = document.createElement('div')

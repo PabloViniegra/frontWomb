@@ -102,6 +102,7 @@ async function getLastWombsAndDrawContainers() {
     response.forEach(element => {
         let div = document.createElement('div')
         div.style.border = '2px solid black'
+        div.style.boxShadow = '4px 4px 0 black'
         div.style.borderRadius = '10px'
         div.setAttribute('class', 'col-12 row p-3 border-black mb-5')
         let divimg = document.createElement('div')
@@ -114,15 +115,15 @@ async function getLastWombsAndDrawContainers() {
         divimg.appendChild(img)
         div.appendChild(divimg)
         let divcontent = document.createElement('div')
-        divcontent.setAttribute('class', 'col-12 col-md-6 row justifiy-content-center p-2')
+        divcontent.setAttribute('class', 'col-12 col-md-6 row justifiy-content-center p-2 align-items-center')
         div.appendChild(divcontent)
         let product = document.createElement('h3')
         product.setAttribute('class', 'col-8')
         product.innerHTML = element.product.name
         divcontent.appendChild(product)
         let user = document.createElement('h3')
-        user.setAttribute('class', 'col-4')
-        user.innerHTML = element.user.username
+        user.setAttribute('class', 'col-4 text-center')
+        user.innerHTML = '<i class="fas fa-user"></i>' + element.user.username
         divcontent.appendChild(user)
         let score = document.createElement('h6')
         score.setAttribute('class', 'col-12 text-center')
@@ -130,7 +131,7 @@ async function getLastWombsAndDrawContainers() {
         let btn = document.createElement('button')
         btn.setAttribute('type', 'button')
         btn.setAttribute('height', '8px')
-        btn.setAttribute('class', 'btn btn-outline-primary col-12 col-md-4 text-center p-3 mt-5')
+        btn.setAttribute('class', 'btn btn-outline-primary btn-lg col-12 col-md-4 text-center p-3 mt-5')
         btn.innerHTML = 'Ver Womb'
         divcontent.appendChild(score)
         div.appendChild(btn)
