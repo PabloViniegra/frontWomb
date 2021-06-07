@@ -6,6 +6,8 @@ let page = urlParams.get('page')
 window.onload = async () => {
     manageSession()
     searchWomb()
+    
+    //the default page is loaded, if not the one indicated by url
     if (localStorage.getItem('keyword_search') != undefined) {
         await buildPagination()
         if (page != undefined) {
@@ -107,7 +109,7 @@ async function loadResults(i) {
         })
 
 }
-
+//build the page numbers by calculating how many you need
 async function buildPagination() {
     let numberPages = await getNumberItems();
     let calculatedNumber;

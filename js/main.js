@@ -7,7 +7,7 @@ window.onload = () => {
     
     
 }
-
+//Detects if session exists or not, and transforms it with the DOM.
 async function manageSession() {
     if (localStorage.getItem('username') != undefined) {
         let username = localStorage.getItem('username');
@@ -71,7 +71,7 @@ async function manageSession() {
     }
 
 }
-
+//Grants functionality to the menu search bar
 async function searchWomb() {
     let form = document.querySelector('#formSearch')
     const options = {

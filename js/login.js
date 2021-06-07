@@ -5,6 +5,7 @@ let idCountry;
 let debug_register = document.querySelector('#debug_register')
 let debug_login = document.querySelector('#debug_login')
 
+//requests authentication from the API and saves it to the local Javascript storage
 async function getAuthentication(username, password) {
     const options = {
         headers: {
@@ -134,7 +135,7 @@ async function addNewUser() {
     })
 
 }
-
+//list of validations performed by the registry
 function validateEmail(email) {
     const validation = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (email.match(validation)) {
@@ -221,6 +222,7 @@ function complexPassword(password) {
     }
 }
 
+//login function
 async function loginIntoWomb() {
     document.querySelector('#formLogin').addEventListener('submit', (e) => {
         e.preventDefault();

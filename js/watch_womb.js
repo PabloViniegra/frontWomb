@@ -18,6 +18,7 @@ window.onload = () => {
     }
 }
 
+//remember if that womb is in favorites
 async function checkFavourites(username, idWomb) {
     const options = {
         'Content-Type': 'application/json',
@@ -267,7 +268,7 @@ async function addFavourite(favIcon) {
             }
         })
 }
-
+//fill the womb's body
 function fillBodyWomb(response, commentary, date, actualUser) {
     let body = {
         commentary: commentary,
@@ -343,7 +344,7 @@ document.querySelector('#btnPushCommentary').addEventListener('click', async () 
         document.querySelector('#debug').innerHTML = 'No se puede publicar un comentario vacío.'
     }
 })
-
+//confirmation to delete
 function buildModal(id, div, confirmationId) {
     let divMain = document.createElement('div')
     divMain.setAttribute('class','modal fade')
