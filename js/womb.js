@@ -68,6 +68,7 @@ async function addWomb() {
             if (response.status == 200) {
                 checkImageWomb.style.transition = '0.5s'
                 checkImageWomb.style.display = 'block'
+                checkImageWomb.style.textAlign = 'center'
             }
         })
 

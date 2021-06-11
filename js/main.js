@@ -104,7 +104,7 @@ async function getLastWombsAndDrawContainers() {
         div.style.border = '2px solid black'
         div.style.boxShadow = '4px 4px 0 black'
         div.style.borderRadius = '10px'
-        div.setAttribute('class', 'col-12 row p-3 border-black mb-5')
+        div.setAttribute('class', 'col-12 row p-3 border-black mb-5 justify-content-center')
         let divimg = document.createElement('div')
         divimg.setAttribute('class', 'col-12 col-md-6 text-center')
         let img = document.createElement('img')
