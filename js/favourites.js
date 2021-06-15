@@ -107,7 +107,7 @@ function drawContainerFavourites(response, container) {
         container.appendChild(div)
         let p = document.createElement('h4')
         p.setAttribute('class', 'col-12 col-md-3')
-        p.innerHTML = element.user.username
+        p.innerHTML = '<i class="fas fa-user pr-1"></i>' + element.user.username
         div.appendChild(p)
         let img = document.createElement('img')
         img.setAttribute('class', 'col-12 col-md-3 img-fluid img-thumbnail')

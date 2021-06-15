@@ -9,9 +9,9 @@ window.onload = () => {
     searchWomb()
     if (localStorage.getItem('see_womb') != undefined) {
         id = localStorage.getItem('see_womb')
-        getWomb(id)
+        getWombAndDrawContainer(id)
         getUser(localStorage.getItem('username'));
-        checkFavourites(localStorage.getItem('username'), id)
+        checkIfThisWombIsInMyFavourites(localStorage.getItem('username'), id)
         loadCommentariesOfThisWomb()
     } else {
         console.log('id is undefined')
@@ -19,7 +19,7 @@ window.onload = () => {
 }
 
 //remember if that womb is in favorites
-async function checkFavourites(username, idWomb) {
+async function checkIfThisWombIsInMyFavourites(username, idWomb) {
     const options = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -27,6 +27,7 @@ async function checkFavourites(username, idWomb) {
     axios.defaults.headers.common['Authorization'] = localStorage.getItem('token')
     await axios.get(BASE_URL + 'favourites/check/' + username + '/' + idWomb, options)
         .then(response => {
+            //if this womb is in favourites the color's star changes
             if (response.status == 200) {
                 document.querySelector('#iconFavourite').src = '../resources/img/star_shining.png'
                 document.querySelector('#iconFavourite').setAttribute('favStatus', 'true')
@@ -97,6 +98,7 @@ async function loadCommentariesOfThisWomb() {
                     commentary.innerHTML = element.commentary
                     div.appendChild(commentary)
 
+                    //If that commentary is from user, he can delete it.
                     if (localStorage.getItem('username') == element.user.username) {
                         let confirmationId = 'confirmation-delete-' + element.id
                         let btnDelete = document.createElement('button')
@@ -125,7 +127,7 @@ async function deleteCommentary(id) {
 
 }
 
-async function getWomb(id) {
+async function getWombAndDrawContainer(id) {
     const options = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -177,6 +179,7 @@ async function getWomb(id) {
             colContent.appendChild(footerDiv)
             let score = document.createElement('div')
             score.setAttribute('class', 'col-6')
+            score.style.fontSize = '16px';
             score.innerHTML = 'Puntuación: ' + response.score
             footerDiv.appendChild(score)
             let user = document.createElement('div')
